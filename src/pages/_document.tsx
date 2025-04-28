@@ -21,7 +21,6 @@ export default function Document() {
         {/* <meta name="theme-color" content="#8B5CF6" /> */} {/* Example purple */}
 
       </Head>
-      {/* Apply inline style for initial dark background */}
       <body style={{ backgroundColor: '#0a0a0a' }}> {/* Dark background */}
         <Main />
         <NextScript />
