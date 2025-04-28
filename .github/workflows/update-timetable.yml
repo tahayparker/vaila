@@ -6,24 +6,26 @@ on:
     - cron: "0 */4 * * *"
   workflow_dispatch: # Allow manual trigger
 
+# *** ADD THIS PERMISSIONS BLOCK ***
+permissions:
+  contents: write # Allow workflow to push code changes
+
 jobs:
-  update-data: # Renamed job for clarity
+  update-data:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        # No fetch-depth needed if just committing changes to checked out branch
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12" # Use the version you test with
+          python-version: "3.12"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          # Ensure all required packages are listed
           pip install supabase python-dotenv cloudscraper beautifulsoup4 httpx postgrest
 
       - name: Set up Supabase environment variables
@@ -34,7 +36,6 @@ jobs:
           echo "Setting Supabase environment variables..."
           if [ -z "$SUPABASE_URL_SECRET" ]; then echo "::error::SUPABASE_URL secret not set."; exit 1; fi
           if [ -z "$SUPABASE_SERVICE_KEY_SECRET" ]; then echo "::error::SUPABASE_SERVICE_ROLE_KEY secret not set."; exit 1; fi
-          # Add vars to GITHUB_ENV so subsequent Python steps can access them via os.getenv()
           echo "SUPABASE_URL=$SUPABASE_URL_SECRET" >> $GITHUB_ENV
           echo "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_KEY_SECRET" >> $GITHUB_ENV
           echo "Supabase variables configured."
@@ -78,18 +79,17 @@ jobs:
       - name: Commit and push data changes (Step 4)
         run: |
           echo "Checking for changes in classes.csv and scheduleData.json..."
-          # Add both potentially changed files
           git add public/classes.csv public/scheduleData.json
 
-          # Check if there are any staged changes
           if git diff --staged --quiet; then
             echo "No changes detected in CSV or JSON files to commit."
           else
             echo "Changes detected. Committing and pushing..."
-            git config user.name "Vaila Update Bot" # Changed user name
-            git config user.email "actions@github.com" # Standard actions email
+            # *** UPDATED User Name/Email ***
+            git config user.name "Taha Parker via GitHub Actions"
+            git config user.email "98612931+tahayparker@users.noreply.github.com"
             git commit -m "Update timetable CSV and professor schedule JSON [skip ci]"
-            # Add retry logic for push in case of transient network issues
+            # Retry logic for push
             git push || (sleep 5 && git push) || (sleep 10 && git push)
             if [ $? -ne 0 ]; then
               echo "::error::Failed to push changes after multiple retries."
