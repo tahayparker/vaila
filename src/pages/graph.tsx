@@ -37,7 +37,7 @@ const daysOfWeek = [
   "Sunday",
 ];
 const timeIntervals = [
-  /* ... same time intervals ... */ "08:30",
+  "08:30",
   "09:00",
   "09:30",
   "10:00",
