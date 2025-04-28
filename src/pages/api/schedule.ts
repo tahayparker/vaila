@@ -5,14 +5,14 @@ import path from "path";
 // ** REMOVED: import { createSupabaseRouteHandlerClient } from '@/lib/supabase/server'; **
 
 // Define the expected structure from the JSON file
-interface FrontendRoomData {
-  room: string;
+interface FrontendProfessorData {
+  professor: string;
   availability: number[];
 }
 
 interface FrontendScheduleDay {
   day: string;
-  rooms: FrontendRoomData[];
+  rooms: FrontendProfessorData[];
 }
 export default async function handler(
   req: NextApiRequest,
