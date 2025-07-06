@@ -960,6 +960,39 @@
         ]
       },
       {
+        "professor": "Christopher Tuffnell",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Ciara O'Driscoll",
         "availability": [
           1,
@@ -1159,6 +1192,39 @@
       },
       {
         "professor": "Deepshikha Vyas",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "professor": "Dima Yousef",
         "availability": [
           1,
           1,
@@ -4359,6 +4425,39 @@
         ]
       },
       {
+        "professor": "Saima Farooq",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Samira Sobeih",
         "availability": [
           1,
@@ -5019,39 +5118,6 @@
         ]
       },
       {
-        "professor": "TBA, 1",
-        "availability": [
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1
-        ]
-      },
-      {
         "professor": "Tania Abillama",
         "availability": [
           0,
@@ -5481,7 +5547,7 @@
         ]
       },
       {
-        "professor": "Zeyad Choucair",
+        "professor": "Ziad Choucair",
         "availability": [
           1,
           1,
@@ -6509,6 +6575,39 @@
         ]
       },
       {
+        "professor": "Christopher Tuffnell",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Ciara O'Driscoll",
         "availability": [
           1,
@@ -6708,6 +6807,39 @@
       },
       {
         "professor": "Deepshikha Vyas",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "professor": "Dima Yousef",
         "availability": [
           1,
           1,
@@ -9908,6 +10040,39 @@
         ]
       },
       {
+        "professor": "Saima Farooq",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Samira Sobeih",
         "availability": [
           0,
@@ -10568,39 +10733,6 @@
         ]
       },
       {
-        "professor": "TBA, 1",
-        "availability": [
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1
-        ]
-      },
-      {
         "professor": "Tania Abillama",
         "availability": [
           1,
@@ -11030,7 +11162,7 @@
         ]
       },
       {
-        "professor": "Zeyad Choucair",
+        "professor": "Ziad Choucair",
         "availability": [
           1,
           1,
@@ -12058,6 +12190,39 @@
         ]
       },
       {
+        "professor": "Christopher Tuffnell",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Ciara O'Driscoll",
         "availability": [
           1,
@@ -12257,6 +12422,39 @@
       },
       {
         "professor": "Deepshikha Vyas",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "professor": "Dima Yousef",
         "availability": [
           1,
           1,
@@ -15457,6 +15655,39 @@
         ]
       },
       {
+        "professor": "Saima Farooq",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Samira Sobeih",
         "availability": [
           1,
@@ -16117,39 +16348,6 @@
         ]
       },
       {
-        "professor": "TBA, 1",
-        "availability": [
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1
-        ]
-      },
-      {
         "professor": "Tania Abillama",
         "availability": [
           0,
@@ -16579,7 +16777,7 @@
         ]
       },
       {
-        "professor": "Zeyad Choucair",
+        "professor": "Ziad Choucair",
         "availability": [
           1,
           1,
@@ -17607,6 +17805,39 @@
         ]
       },
       {
+        "professor": "Christopher Tuffnell",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
         "professor": "Ciara O'Driscoll",
         "availability": [
           0,
@@ -17834,6 +18065,39 @@
           1,
           1,
           1,
+          1
+        ]
+      },
+      {
+        "professor": "Dima Yousef",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           1
         ]
       },
@@ -21006,6 +21270,39 @@
         ]
       },
       {
+        "professor": "Saima Farooq",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Samira Sobeih",
         "availability": [
           1,
@@ -21666,39 +21963,6 @@
         ]
       },
       {
-        "professor": "TBA, 1",
-        "availability": [
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          1
-        ]
-      },
-      {
         "professor": "Tania Abillama",
         "availability": [
           1,
@@ -22128,7 +22392,7 @@
         ]
       },
       {
-        "professor": "Zeyad Choucair",
+        "professor": "Ziad Choucair",
         "availability": [
           1,
           1,
@@ -22778,10 +23042,10 @@
           1,
           1,
           1,
-          0,
-          0,
-          0,
-          0,
+          1,
+          1,
+          1,
+          1,
           1,
           1,
           1,
@@ -23156,6 +23420,39 @@
         ]
       },
       {
+        "professor": "Christopher Tuffnell",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Ciara O'Driscoll",
         "availability": [
           1,
@@ -23376,6 +23673,39 @@
           0,
           0,
           0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "professor": "Dima Yousef",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
           1,
           1,
           1,
@@ -26555,6 +26885,39 @@
         ]
       },
       {
+        "professor": "Saima Farooq",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Samira Sobeih",
         "availability": [
           1,
@@ -27215,39 +27578,6 @@
         ]
       },
       {
-        "professor": "TBA, 1",
-        "availability": [
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1
-        ]
-      },
-      {
         "professor": "Tania Abillama",
         "availability": [
           1,
@@ -27677,24 +28007,24 @@
         ]
       },
       {
-        "professor": "Zeyad Choucair",
+        "professor": "Ziad Choucair",
         "availability": [
           1,
           1,
           1,
           1,
-          0,
-          0,
-          0,
-          0,
           1,
           1,
           1,
           1,
-          0,
-          0,
-          0,
-          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
           1,
           1,
           1,
@@ -28705,6 +29035,39 @@
         ]
       },
       {
+        "professor": "Christopher Tuffnell",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Ciara O'Driscoll",
         "availability": [
           1,
@@ -28904,6 +29267,39 @@
       },
       {
         "professor": "Deepshikha Vyas",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "professor": "Dima Yousef",
         "availability": [
           1,
           1,
@@ -32104,6 +32500,39 @@
         ]
       },
       {
+        "professor": "Saima Farooq",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Samira Sobeih",
         "availability": [
           1,
@@ -32764,39 +33193,6 @@
         ]
       },
       {
-        "professor": "TBA, 1",
-        "availability": [
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1
-        ]
-      },
-      {
         "professor": "Tania Abillama",
         "availability": [
           1,
@@ -33226,7 +33622,7 @@
         ]
       },
       {
-        "professor": "Zeyad Choucair",
+        "professor": "Ziad Choucair",
         "availability": [
           1,
           1,
@@ -34254,6 +34650,39 @@
         ]
       },
       {
+        "professor": "Christopher Tuffnell",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Ciara O'Driscoll",
         "availability": [
           1,
@@ -34453,6 +34882,39 @@
       },
       {
         "professor": "Deepshikha Vyas",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "professor": "Dima Yousef",
         "availability": [
           1,
           1,
@@ -37653,6 +38115,39 @@
         ]
       },
       {
+        "professor": "Saima Farooq",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
         "professor": "Samira Sobeih",
         "availability": [
           1,
@@ -38313,39 +38808,6 @@
         ]
       },
       {
-        "professor": "TBA, 1",
-        "availability": [
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1
-        ]
-      },
-      {
         "professor": "Tania Abillama",
         "availability": [
           1,
@@ -38775,7 +39237,7 @@
         ]
       },
       {
-        "professor": "Zeyad Choucair",
+        "professor": "Ziad Choucair",
         "availability": [
           1,
           1,
