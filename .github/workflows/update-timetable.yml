@@ -2,8 +2,8 @@ name: Update Timetable Data & Professor Info
 
 on:
   schedule:
-    # Run every 20 mins
-    - cron: "0/20 * * * *"
+    # Run every 5 mins
+    - cron: "0/5 * * * *"
   workflow_dispatch: # Allow manual trigger
 
 # *** ADD THIS PERMISSIONS BLOCK ***
