@@ -18,7 +18,7 @@ SCRIPT_DIR = Path(__file__).parent
 DEFAULT_CSV_PATH = SCRIPT_DIR.parent / "public" / "classes.csv"
 TEACHER_TABLE = "Teacher"
 # Define placeholder/common names to ignore from the CSV
-PLACEHOLDER_TEACHER_NAMES_CSV = {'Unknown', 'TBA', 'Staff'} # Case-sensitive match from CSV
+PLACEHOLDER_TEACHER_NAMES_CSV = {'Unknown', 'TBA', 'Staff', 'Instructor', 'Adjunct', 'TBD'} # Case-sensitive match from CSV
 
 # --- Supabase Client Initialization ---
 try:
