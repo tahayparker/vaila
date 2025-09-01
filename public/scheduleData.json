@@ -3237,22 +3237,22 @@
         ]
       },
       {
-        "professor": "Lina Gharaibeh",
+        "professor": "Lobna Mansour",
         "availability": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           1,
           1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
+          0,
+          0,
+          0,
+          0,
           1,
           1,
           1,
@@ -3270,22 +3270,22 @@
         ]
       },
       {
-        "professor": "Lobna Mansour",
+        "professor": "Ludmil Trenkov",
         "availability": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
           1,
           1,
-          0,
-          0,
-          0,
-          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
           1,
           1,
           1,
@@ -9875,7 +9875,7 @@
         ]
       },
       {
-        "professor": "Lina Gharaibeh",
+        "professor": "Lobna Mansour",
         "availability": [
           1,
           1,
@@ -9908,7 +9908,7 @@
         ]
       },
       {
-        "professor": "Lobna Mansour",
+        "professor": "Ludmil Trenkov",
         "availability": [
           1,
           1,
@@ -9918,10 +9918,10 @@
           1,
           1,
           1,
-          1,
-          1,
-          1,
-          1,
+          0,
+          0,
+          0,
+          0,
           1,
           1,
           1,
@@ -16513,39 +16513,6 @@
         ]
       },
       {
-        "professor": "Lina Gharaibeh",
-        "availability": [
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          1
-        ]
-      },
-      {
         "professor": "Lobna Mansour",
         "availability": [
           0,
@@ -16556,6 +16523,39 @@
           0,
           0,
           0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "professor": "Ludmil Trenkov",
+        "availability": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
           1,
           1,
           1,
@@ -17847,10 +17847,10 @@
           1,
           1,
           1,
-          1,
-          1,
-          1,
-          1,
+          0,
+          0,
+          0,
+          0,
           1,
           1,
           1,
@@ -23151,7 +23151,7 @@
         ]
       },
       {
-        "professor": "Lina Gharaibeh",
+        "professor": "Lobna Mansour",
         "availability": [
           1,
           1,
@@ -23184,7 +23184,7 @@
         ]
       },
       {
-        "professor": "Lobna Mansour",
+        "professor": "Ludmil Trenkov",
         "availability": [
           1,
           1,
@@ -29789,16 +29789,16 @@
         ]
       },
       {
-        "professor": "Lina Gharaibeh",
+        "professor": "Lobna Mansour",
         "availability": [
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           1,
           1,
           1,
@@ -29822,16 +29822,16 @@
         ]
       },
       {
-        "professor": "Lobna Mansour",
+        "professor": "Ludmil Trenkov",
         "availability": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
           1,
           1,
           1,
@@ -32978,14 +32978,14 @@
           1,
           1,
           1,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
           1
         ]
       },
@@ -36427,7 +36427,7 @@
         ]
       },
       {
-        "professor": "Lina Gharaibeh",
+        "professor": "Lobna Mansour",
         "availability": [
           1,
           1,
@@ -36460,7 +36460,7 @@
         ]
       },
       {
-        "professor": "Lobna Mansour",
+        "professor": "Ludmil Trenkov",
         "availability": [
           1,
           1,
@@ -43065,7 +43065,7 @@
         ]
       },
       {
-        "professor": "Lina Gharaibeh",
+        "professor": "Lobna Mansour",
         "availability": [
           1,
           1,
@@ -43098,7 +43098,7 @@
         ]
       },
       {
-        "professor": "Lobna Mansour",
+        "professor": "Ludmil Trenkov",
         "availability": [
           1,
           1,
