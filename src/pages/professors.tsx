@@ -36,7 +36,7 @@ interface SortConfig {
 }
 
 // --- Constants ---
-const FILTER_KEYWORDS = ["instructor", "adjunct", "tba", "new ", " ps"];
+const FILTER_KEYWORDS = ["instructor", "adjunct", "tba", "new ", " ps", "tbd", "unknown", "staff"];
 
 // --- Helper Function ---
 const formatTelUriWithExtension = (
