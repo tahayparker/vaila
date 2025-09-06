@@ -54,17 +54,38 @@ def fetch_scheduled_teachers() -> List[str]:
     print("Fetching scheduled teachers from Timings data...")
     teacher_names: Set[str] = set()
     try:
-        response = (
-            supabase.table("Timings")
-            .select("Teacher")
-            .neq("Teacher", None) # Ensure Teacher is not null
-            .order("Teacher") # Add explicit ordering for consistency
-            .execute()
-        )
+        # Fetch all records using pagination to handle large datasets
+        all_data = []
+        offset = 0
+        page_size = 1000
 
-        if response.data:
+        while True:
+            response = (
+                supabase.table("Timings")
+                .select("Teacher")
+                .neq("Teacher", None) # Ensure Teacher is not null
+                .order("Teacher") # Add explicit ordering for consistency
+                .range(offset, offset + page_size - 1) # Use range for pagination
+                .execute()
+            )
+
+            if not response.data or len(response.data) == 0:
+                break
+
+            all_data.extend(response.data)
+            print(f"Fetched page: {len(response.data)} records (total so far: {len(all_data)})")
+
+            # If we got less than page_size records, we've reached the end
+            if len(response.data) < page_size:
+                break
+
+            offset += page_size
+
+        print(f"Total records fetched: {len(all_data)}")
+
+        if all_data:
             count = 0
-            for timing in response.data:
+            for timing in all_data:
                 teacher = timing.get("Teacher")
                 if teacher and teacher.strip():
                     teacher_names.add(teacher.strip())
@@ -92,18 +113,38 @@ def fetch_all_professor_timings() -> ProfessorTimingsDict:
     print("Fetching all timings from Supabase and grouping by Professor...")
     timings_by_day: ProfessorTimingsDict = defaultdict(lambda: defaultdict(list))
     try:
-        # Select columns needed for grouping
-        response = (
-            supabase.table("Timings")
-            .select("Day, Teacher, StartTime, EndTime")
-            .neq("Teacher", None) # Ensure Teacher is not null
-            .order("Day, Teacher, StartTime") # Add explicit ordering for consistency
-            .execute()
-        )
+        # Fetch all records using pagination to handle large datasets
+        all_data = []
+        offset = 0
+        page_size = 1000
 
-        if response.data:
+        while True:
+            response = (
+                supabase.table("Timings")
+                .select("Day, Teacher, StartTime, EndTime")
+                .neq("Teacher", None) # Ensure Teacher is not null
+                .order("Day, Teacher, StartTime") # Add explicit ordering for consistency
+                .range(offset, offset + page_size - 1) # Use range for pagination
+                .execute()
+            )
+
+            if not response.data or len(response.data) == 0:
+                break
+
+            all_data.extend(response.data)
+            print(f"Fetched timings page: {len(response.data)} records (total so far: {len(all_data)})")
+
+            # If we got less than page_size records, we've reached the end
+            if len(response.data) < page_size:
+                break
+
+            offset += page_size
+
+        print(f"Total timing records fetched: {len(all_data)}")
+
+        if all_data:
             processed_count = 0
-            for timing in response.data:
+            for timing in all_data:
                 day = timing.get("Day")
                 teacher_name = timing.get("Teacher")
                 start_time = timing.get("StartTime")
