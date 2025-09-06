@@ -72,5 +72,5 @@ jobs:
           curl -s -X PATCH \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{"state": "closed", "state_reason": "not_planned"}' \
+            -d '{"state": "closed"}' \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}"
