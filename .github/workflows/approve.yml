@@ -11,11 +11,12 @@ permissions:
 jobs:
   approve:
     runs-on: ubuntu-latest
-    # Only run if comment is "approve" and issue has "contact" label
+    # Only run if comment is "approve", issue has "contact" label, and commenter is tahayparker
     if: |
       github.event.comment.body == 'approve' &&
       contains(github.event.issue.labels.*.name, 'contact') &&
-      github.event.issue.state == 'open'
+      github.event.issue.state == 'open' &&
+      github.event.comment.user.login == 'tahayparker'
 
     steps:
       - name: Extract professor details from issue
