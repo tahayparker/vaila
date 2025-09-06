@@ -36,7 +36,16 @@ interface SortConfig {
 }
 
 // --- Constants ---
-const FILTER_KEYWORDS = ["instructor", "adjunct", "tba", "new ", " ps", "tbd", "unknown", "staff"];
+const FILTER_KEYWORDS = [
+  "instructor",
+  "adjunct",
+  "tba",
+  "new ",
+  " ps",
+  "tbd",
+  "unknown",
+  "staff",
+];
 
 // --- Helper Function ---
 const formatTelUriWithExtension = (
@@ -282,7 +291,7 @@ export default function TeacherDetailsPage() {
         <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />{" "}
         <Input
           type="text"
-          placeholder="Search by professor name..."
+          placeholder={`Search ${allTeachers.length} professors by name...`}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full pl-10 pr-4 h-11 py-2.5 bg-black/30 border-white/25 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-purple-500 focus:border-purple-500 rounded-full"
