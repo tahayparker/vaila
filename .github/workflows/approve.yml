@@ -23,8 +23,6 @@ jobs:
         run: |
           echo "=== WORKFLOW CONDITION DEBUG ==="
           echo "Comment body (raw): '${{ github.event.comment.body }}'"
-          echo "Comment body (trimmed): '$(echo '${{ github.event.comment.body }}' | xargs)'"
-          echo "Comment body length: ${#'${{ github.event.comment.body }}'}"
           echo "Comment user: '${{ github.event.comment.user.login }}'"
           echo "Issue state: '${{ github.event.issue.state }}'"
           echo "Issue labels: ${{ toJson(github.event.issue.labels.*.name) }}"
