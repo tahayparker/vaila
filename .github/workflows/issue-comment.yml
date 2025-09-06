@@ -2,7 +2,7 @@ name: Comment on Professor Issue
 
 on:
   issues:
-    types: [opened]
+    types: [opened, labeled]
 
 permissions:
   issues: write
@@ -15,6 +15,13 @@ jobs:
     if: contains(github.event.issue.labels.*.name, 'contact')
 
     steps:
+      - name: Debug issue information
+        run: |
+          echo "Issue number: ${{ github.event.issue.number }}"
+          echo "Issue title: ${{ github.event.issue.title }}"
+          echo "Issue labels: ${{ toJson(github.event.issue.labels.*.name) }}"
+          echo "Event action: ${{ github.event.action }}"
+
       - name: Add Approve/Reject instructions
         uses: peter-evans/create-or-update-comment@v4
         with:
@@ -32,4 +39,6 @@ jobs:
             **Instructions:**
             - To **approve**: Simply comment `approve` on this issue
             - To **reject**: Comment `reject` or `reject: reason for rejection` on this issue
-            - The workflows will run automatically when you comment
+            - The workflows will run automatically when **@tahayparker** comments
+
+            *Note: Only @tahayparker can approve/reject professor details updates.*
