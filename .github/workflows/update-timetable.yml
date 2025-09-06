@@ -88,7 +88,7 @@ jobs:
             # *** UPDATED User Name/Email ***
             git config user.name "Taha Parker via GitHub Actions"
             git config user.email "98612931+tahayparker@users.noreply.github.com"
-            git commit -m "Update timetable CSV and professor schedule JSON [skip ci]"
+            git commit -m "Update timetable CSV and professor schedule JSON [skip deploy]"
             # Retry logic for push
             git push || (sleep 5 && git push) || (sleep 10 && git push)
             if [ $? -ne 0 ]; then
