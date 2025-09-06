@@ -119,7 +119,7 @@ jobs:
         run: |
           UPDATED_FIELDS=""
           if [ -n "${{ steps.extract.outputs.email }}" ] && [ "${{ steps.extract.outputs.email }}" != "" ]; then
-            UPDATED_FIELDS="📧 Email: \`${{ steps.extract.outputs.email }}\`"
+            UPDATED_FIELDS="Email: \`${{ steps.extract.outputs.email }}\`"
           fi
 
           if [ -n "${{ steps.extract.outputs.phone }}" ] && [ "${{ steps.extract.outputs.phone }}" != "" ]; then
