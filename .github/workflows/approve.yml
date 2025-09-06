@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     # Only run if comment is exactly "approve", issue has "contact" label, and commenter is tahayparker
     if: |
-      trim(github.event.comment.body) == 'approve' &&
+      contains(github.event.comment.body, 'approve') &&
       contains(github.event.issue.labels.*.name, 'contact') &&
       github.event.issue.state == 'open' &&
       github.event.comment.user.login == 'tahayparker'
@@ -30,7 +30,6 @@ jobs:
           echo "Issue labels: ${{ toJson(github.event.issue.labels.*.name) }}"
           echo "Contains contact label: ${{ contains(github.event.issue.labels.*.name, 'contact') }}"
           echo "Comment equals 'approve': ${{ github.event.comment.body == 'approve' }}"
-          echo "Trimmed comment equals 'approve': ${{ trim(github.event.comment.body) == 'approve' }}"
           echo "User is tahayparker: ${{ github.event.comment.user.login == 'tahayparker' }}"
           echo "Issue is open: ${{ github.event.issue.state == 'open' }}"
           echo "=== END DEBUG ==="
