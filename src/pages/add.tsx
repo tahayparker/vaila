@@ -784,7 +784,7 @@ ${localDateTime}`; // Create the GitHub issue using GitHub API
                 {isLoading ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    Saving...
+                    Submitting...
                   </>
                 ) : (
                   <>
@@ -819,7 +819,8 @@ ${localDateTime}`; // Create the GitHub issue using GitHub API
                       GitHub issue created successfully!
                     </p>
                     <p className="text-green-300/80 text-sm mb-1">
-                      Thank you for submitting the professor contact details.
+                      Thank you for submitting the professor&quot;s contact
+                      details.
                     </p>
                     <p className="text-green-300/80 text-sm">
                       {issueUrl ? (
