@@ -2,40 +2,30 @@ name: Comment on Professor Issue
 
 on:
   issues:
-    types: [opened, labeled]
+    types: [opened]
 
 jobs:
   comment:
     runs-on: ubuntu-latest
+    # Only run if the issue has the "contact" label (from update professor details template)
+    if: contains(github.event.issue.labels.*.name, 'contact')
 
     steps:
-      - name: Check issue conditions
-        id: check
-        run: |
-          HAS_LABEL=false
-          for label in ${{ toJson(github.event.issue.labels.*.name) }}; do
-            if [[ "$label" == *"contact"* ]]; then
-              HAS_LABEL=true
-            fi
-          done
-
-          BODY="${{ github.event.issue.body }}"
-          if [[ "$HAS_LABEL" == "true" ]] && \
-             [[ "$BODY" == *"Full name:"* ]] && \
-             [[ "$BODY" == *"Email:"* ]] && \
-             [[ "$BODY" == *"Phone:"* ]]; then
-            echo "run_comment=true" >> $GITHUB_ENV
-          else
-            echo "run_comment=false" >> $GITHUB_ENV
-          fi
-
-      - name: Add Approve/Reject table
-        if: env.run_comment == 'true'
+      - name: Add Approve/Reject instructions
         uses: peter-evans/create-or-update-comment@v4
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
-            | Action |
-            | :--- |
-            | [Approve](../../actions/workflows/approve.yml?issue=${{ github.event.issue.number }}) |
-            | [Reject](../../actions/workflows/reject.yml?issue=${{ github.event.issue.number }}) |
+            ## Review Professor Details Update
+
+            Please review the professor details update request above and choose an action by commenting on this issue:
+
+            | Action | Command | Description |
+            |--------|---------|-------------|
+            | ✅ **Approve** | Comment: `approve` | Update professor details in database and close issue |
+            | ❌ **Reject** | Comment: `reject` or `reject: [reason]` | Reject this update request and close issue |
+
+            **Instructions:**
+            - To **approve**: Simply comment `approve` on this issue
+            - To **reject**: Comment `reject` or `reject: reason for rejection` on this issue
+            - The workflows will run automatically when you comment
