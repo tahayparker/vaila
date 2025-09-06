@@ -18,6 +18,7 @@ import {
   PhoneCall,
   MoreHorizontal,
   X,
+  Plus,
 } from "lucide-react"; // Loader2 import needed again if we use it
 import Fuse from "fuse.js";
 import { cn } from "@/lib/utils";
@@ -58,6 +59,10 @@ const formatTelUriWithExtension = (
   if (!digitsOnlyExtension) return `tel:${baseNumber}`;
   const pause = addPause ? "," : "";
   return `tel:${baseNumber}${pause}${digitsOnlyExtension}`;
+};
+
+const hasMissingDetails = (teacher: TeacherData): boolean => {
+  return !teacher.email || !teacher.phone;
 };
 
 // --- Main Page Component ---
@@ -370,6 +375,8 @@ export default function TeacherDetailsPage() {
                     const isFullPhoneNumber = teacher.phone?.startsWith("+");
                     const isExpanded = expandedTeacher === teacher.name;
                     const canPerformAction = !!teacher.email || !!teacher.phone;
+                    const hasIncompleteData = hasMissingDetails(teacher);
+                    const showActions = canPerformAction || hasIncompleteData;
 
                     return (
                       <motion.div
@@ -388,7 +395,7 @@ export default function TeacherDetailsPage() {
                           {" "}
                           {teacher.name}{" "}
                         </p>
-                        {canPerformAction && (
+                        {showActions && (
                           <div className="flex items-center gap-1 flex-shrink-0">
                             <AnimatePresence initial={false}>
                               {isExpanded && (
@@ -476,6 +483,29 @@ export default function TeacherDetailsPage() {
                                         </a>
                                       </>
                                     ))}
+                                  {/* Add Details Button */}
+                                  {hasMissingDetails(teacher) && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="h-8 px-2.5 bg-orange-500/20 border-orange-400/50 text-orange-200 hover:bg-orange-500/30 hover:text-orange-100 active:bg-orange-500/40"
+                                      onClick={() => {
+                                        // Store only professor name for form prefilling
+                                        const professorData = {
+                                          name: teacher.name,
+                                        };
+                                        sessionStorage.setItem(
+                                          "professor-form-data",
+                                          JSON.stringify(professorData),
+                                        );
+                                        window.open("/add", "_blank");
+                                      }}
+                                      aria-label={`Add missing details for ${teacher.name}`}
+                                    >
+                                      <Plus className="w-4 h-4 mr-1" />
+                                      Add
+                                    </Button>
+                                  )}
                                 </motion.div>
                               )}
                             </AnimatePresence>
@@ -626,38 +656,65 @@ export default function TeacherDetailsPage() {
                                 <div className="flex items-center justify-between gap-2">
                                   {" "}
                                   {teacher.email ? (
-                                    <a
-                                      href={`mailto:${teacher.email}`}
-                                      className="text-purple-400 hover:text-purple-300 hover:underline underline-offset-2 truncate"
-                                      title={teacher.email}
-                                    >
-                                      {" "}
-                                      {teacher.email}{" "}
-                                    </a>
+                                    <>
+                                      <a
+                                        href={`mailto:${teacher.email}`}
+                                        className="text-purple-400 hover:text-purple-300 hover:underline underline-offset-2 truncate"
+                                        title={teacher.email}
+                                      >
+                                        {" "}
+                                        {teacher.email}{" "}
+                                      </a>
+                                      <button
+                                        key={isCopied ? "copied" : "copy"}
+                                        onClick={() =>
+                                          handleCopy(teacher.email)
+                                        }
+                                        className="p-1 rounded text-gray-400 hover:text-purple-100 hover:bg-purple-500/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 focus-visible:ring-offset-1 focus-visible:ring-offset-black/50 transition-all duration-150 flex-shrink-0"
+                                        aria-label={
+                                          isCopied
+                                            ? "Email copied"
+                                            : `Copy email for ${teacher.name}`
+                                        }
+                                        disabled={isCopied}
+                                      >
+                                        {" "}
+                                        {isCopied ? (
+                                          <Check className="w-3.5 h-3.5 text-green-400" />
+                                        ) : (
+                                          <Copy className="w-3.5 h-3.5" />
+                                        )}{" "}
+                                      </button>
+                                    </>
                                   ) : (
-                                    <span className="text-gray-500 italic text-xs">
-                                      N/A
-                                    </span>
-                                  )}{" "}
-                                  {teacher.email && (
-                                    <button
-                                      key={isCopied ? "copied" : "copy"}
-                                      onClick={() => handleCopy(teacher.email)}
-                                      className="p-1 rounded text-gray-400 hover:text-purple-100 hover:bg-purple-500/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 focus-visible:ring-offset-1 focus-visible:ring-offset-black/50 transition-all duration-150 flex-shrink-0"
-                                      aria-label={
-                                        isCopied
-                                          ? "Email copied"
-                                          : `Copy email for ${teacher.name}`
-                                      }
-                                      disabled={isCopied}
-                                    >
-                                      {" "}
-                                      {isCopied ? (
-                                        <Check className="w-3.5 h-3.5 text-green-400" />
+                                    <div className="flex items-center justify-center w-full">
+                                      {hasMissingDetails(teacher) ? (
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          className="h-7 px-3 bg-orange-500/20 border-orange-400/50 text-orange-200 hover:bg-orange-500/30 hover:text-orange-100 active:bg-orange-500/40 transition-colors duration-150"
+                                          onClick={() => {
+                                            // Store only professor name for form prefilling
+                                            const professorData = {
+                                              name: teacher.name,
+                                            };
+                                            sessionStorage.setItem(
+                                              "professor-form-data",
+                                              JSON.stringify(professorData),
+                                            );
+                                            window.open("/add", "_blank");
+                                          }}
+                                          aria-label={`Add missing details for ${teacher.name}`}
+                                        >
+                                          <Plus className="w-3.5 h-3.5 mr-1.5" />
+                                          Add Details
+                                        </Button>
                                       ) : (
-                                        <Copy className="w-3.5 h-3.5" />
-                                      )}{" "}
-                                    </button>
+                                        <span className="text-gray-500 italic text-xs">
+                                          N/A
+                                        </span>
+                                      )}
+                                    </div>
                                   )}{" "}
                                 </div>{" "}
                               </td>
@@ -671,54 +728,80 @@ export default function TeacherDetailsPage() {
                                 {" "}
                                 <div className="flex flex-row items-center justify-between gap-x-3">
                                   {" "}
-                                  <span className="text-gray-300 text-sm whitespace-nowrap font-mono flex-shrink-0">
-                                    {" "}
-                                    {teacher.phone || (
-                                      <span className="text-gray-500 italic text-xs">
-                                        N/A
+                                  {teacher.phone ? (
+                                    <>
+                                      <span className="text-gray-300 text-sm whitespace-nowrap font-mono flex-shrink-0">
+                                        {teacher.phone}
                                       </span>
-                                    )}{" "}
-                                  </span>{" "}
-                                  {teacher.phone && (
-                                    <div className="flex items-center gap-1.5 flex-shrink-0">
-                                      {" "}
-                                      {isFullPhoneNumber ? (
-                                        <a
-                                          href={`tel:${teacher.phone}`}
-                                          className="p-2 rounded text-gray-300 hover:text-green-300 hover:bg-green-500/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-400 transition-colors duration-150"
-                                          aria-label={`Call ${teacher.name} (${teacher.phone})`}
-                                        >
-                                          {" "}
-                                          <PhoneCall className="w-4 h-4" />{" "}
-                                        </a>
-                                      ) : (
-                                        <>
+                                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                                        {" "}
+                                        {isFullPhoneNumber ? (
                                           <a
-                                            href={formatTelUriWithExtension(
-                                              "+9718008693",
-                                              teacher.phone,
-                                              true,
-                                            )}
-                                            className="p-2 rounded text-gray-300 hover:text-blue-300 hover:bg-blue-500/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400 transition-colors duration-150"
-                                            aria-label={`Call ${teacher.name} via Toll-Free Ext ${teacher.phone}`}
-                                          >
-                                            {" "}
-                                            <PhoneForwarded className="w-4 h-4" />{" "}
-                                          </a>{" "}
-                                          <a
-                                            href={formatTelUriWithExtension(
-                                              "+9714278",
-                                              teacher.phone,
-                                              false,
-                                            )}
+                                            href={`tel:${teacher.phone}`}
                                             className="p-2 rounded text-gray-300 hover:text-green-300 hover:bg-green-500/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-400 transition-colors duration-150"
-                                            aria-label={`Call ${teacher.name} Direct Ext ${teacher.phone}`}
+                                            aria-label={`Call ${teacher.name} (${teacher.phone})`}
                                           >
                                             {" "}
                                             <PhoneCall className="w-4 h-4" />{" "}
                                           </a>
-                                        </>
-                                      )}{" "}
+                                        ) : (
+                                          <>
+                                            <a
+                                              href={formatTelUriWithExtension(
+                                                "+9718008693",
+                                                teacher.phone,
+                                                true,
+                                              )}
+                                              className="p-2 rounded text-gray-300 hover:text-blue-300 hover:bg-blue-500/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400 transition-colors duration-150"
+                                              aria-label={`Call ${teacher.name} via Toll-Free Ext ${teacher.phone}`}
+                                            >
+                                              {" "}
+                                              <PhoneForwarded className="w-4 h-4" />{" "}
+                                            </a>{" "}
+                                            <a
+                                              href={formatTelUriWithExtension(
+                                                "+9714278",
+                                                teacher.phone,
+                                                false,
+                                              )}
+                                              className="p-2 rounded text-gray-300 hover:text-green-300 hover:bg-green-500/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-green-400 transition-colors duration-150"
+                                              aria-label={`Call ${teacher.name} Direct Ext ${teacher.phone}`}
+                                            >
+                                              {" "}
+                                              <PhoneCall className="w-4 h-4" />{" "}
+                                            </a>
+                                          </>
+                                        )}{" "}
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <div className="flex items-center justify-center w-full">
+                                      {hasMissingDetails(teacher) ? (
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          className="h-7 px-3 bg-orange-500/20 border-orange-400/50 text-orange-200 hover:bg-orange-500/30 hover:text-orange-100 active:bg-orange-500/40 transition-colors duration-150"
+                                          onClick={() => {
+                                            // Store only professor name for form prefilling
+                                            const professorData = {
+                                              name: teacher.name,
+                                            };
+                                            sessionStorage.setItem(
+                                              "professor-form-data",
+                                              JSON.stringify(professorData),
+                                            );
+                                            window.open("/add", "_blank");
+                                          }}
+                                          aria-label={`Add missing details for ${teacher.name}`}
+                                        >
+                                          <Plus className="w-3.5 h-3.5 mr-1.5" />
+                                          Add Details
+                                        </Button>
+                                      ) : (
+                                        <span className="text-gray-500 italic text-xs">
+                                          N/A
+                                        </span>
+                                      )}
                                     </div>
                                   )}{" "}
                                 </div>{" "}
