@@ -36,7 +36,10 @@ export default function App({ Component, pageProps }: AppProps) {
           // Conditional styles for pages that should be vertically centered:
           // Homepage, 404, and 500 error pages should be vertically centered
           // Apply vertical centering on all screen sizes, with appropriate padding adjustments
-          (router.pathname === "/" || router.pathname === "/404" || router.pathname === "/500") && "justify-center pt-16 sm:pt-20 md:pt-0",
+          (router.pathname === "/" ||
+            router.pathname === "/404" ||
+            router.pathname === "/500") &&
+            "justify-center pt-16 sm:pt-20 md:pt-0",
           // REMOVED: The general 'justify-center' that was applied to all non-homepage routes.
           // Now, pages other than '/', '/404', '/500' will naturally start their content flow from the top
           // of the main area (below the header).
