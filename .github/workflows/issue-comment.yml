@@ -6,14 +6,31 @@ on:
 
 jobs:
   comment:
-    if: |
-      contains(github.event.issue.labels.*.name, 'contact') &&
-      contains(github.event.issue.body, 'Full name:') &&
-      contains(github.event.issue.body, 'Email:') &&
-      contains(github.event.issue.body, 'Phone:')
     runs-on: ubuntu-latest
+
     steps:
+      - name: Check issue conditions
+        id: check
+        run: |
+          HAS_LABEL=false
+          for label in ${{ toJson(github.event.issue.labels.*.name) }}; do
+            if [[ "$label" == *"contact"* ]]; then
+              HAS_LABEL=true
+            fi
+          done
+
+          BODY="${{ github.event.issue.body }}"
+          if [[ "$HAS_LABEL" == "true" ]] && \
+             [[ "$BODY" == *"Full name:"* ]] && \
+             [[ "$BODY" == *"Email:"* ]] && \
+             [[ "$BODY" == *"Phone:"* ]]; then
+            echo "run_comment=true" >> $GITHUB_ENV
+          else
+            echo "run_comment=false" >> $GITHUB_ENV
+          fi
+
       - name: Add Approve/Reject table
+        if: env.run_comment == 'true'
         uses: peter-evans/create-or-update-comment@v4
         with:
           issue-number: ${{ github.event.issue.number }}
