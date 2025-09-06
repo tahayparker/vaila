@@ -819,7 +819,7 @@ ${localDateTime}`; // Create the GitHub issue using GitHub API
                       GitHub issue created successfully!
                     </p>
                     <p className="text-green-300/80 text-sm mb-1">
-                      Thank you for submitting the professor&quot;s contact
+                      Thank you for submitting the professor&apos;s contact
                       details.
                     </p>
                     <p className="text-green-300/80 text-sm">
