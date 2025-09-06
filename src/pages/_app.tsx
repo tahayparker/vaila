@@ -33,12 +33,13 @@ export default function App({ Component, pageProps }: AppProps) {
         className={cn(
           // Base styles: flex column, grow, center items horizontally
           "flex flex-col flex-grow items-center z-10 w-full px-4 sm:px-8",
-          // Conditional styles ONLY for the homepage:
-          // On medium screens and up, vertically center the homepage content
+          // Conditional styles for pages that should be vertically centered:
+          // Homepage, 404, and 500 error pages should be vertically centered
+          // On medium screens and up, vertically center the content
           // and adjust top padding to account for header/centering.
-          router.pathname === "/" && "md:justify-center pt-16 md:pt-0",
+          (router.pathname === "/" || router.pathname === "/404" || router.pathname === "/500") && "md:justify-center pt-16 md:pt-0",
           // REMOVED: The general 'justify-center' that was applied to all non-homepage routes.
-          // Now, pages other than '/' will naturally start their content flow from the top
+          // Now, pages other than '/', '/404', '/500' will naturally start their content flow from the top
           // of the main area (below the header).
         )}
       >
