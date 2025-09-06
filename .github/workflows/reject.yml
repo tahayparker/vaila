@@ -1,47 +1,55 @@
-name: Reject Contact
+name: Reject Professor Details Update
 
 on:
-  workflow_dispatch:
-    inputs:
-      issue:
-        description: 'Issue number'
-        required: true
-      reason:
-        description: 'Reason for rejection'
-        required: false
+  issue_comment:
+    types: [created]
 
 jobs:
   reject:
     runs-on: ubuntu-latest
+    # Only run if comment starts with "reject" and issue has "contact" label
+    if: |
+      startsWith(github.event.comment.body, 'reject') &&
+      contains(github.event.issue.labels.*.name, 'contact') &&
+      github.event.issue.state == 'open'
 
     steps:
-      - name: Check if issue has "contact" label
-        id: check-label
+      - name: Extract rejection reason
+        id: extract-reason
         run: |
-          LABELS=$(gh issue view ${{ github.event.inputs.issue }} --json labels -q '.labels[].name')
-          if echo "$LABELS" | grep -qw "contact"; then
-            echo "has_contact=true" >> $GITHUB_ENV
+          COMMENT="${{ github.event.comment.body }}"
+          # Extract reason after "reject:" or "reject "
+          if [[ "$COMMENT" == *":"* ]]; then
+            REASON=$(echo "$COMMENT" | sed 's/reject: *//' | xargs)
+          elif [[ "$COMMENT" != "reject" ]]; then
+            REASON=$(echo "$COMMENT" | sed 's/reject *//' | xargs)
           else
-            echo "has_contact=false" >> $GITHUB_ENV
+            REASON=""
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "reason=$REASON" >> $GITHUB_OUTPUT
+          echo "Extracted reason: '$REASON'"
 
-      - name: Fail if missing label
-        if: env.has_contact != 'true'
+      - name: Add rejection comment and close issue
         run: |
-          echo "❌ Issue does not have the 'contact' label. Skipping."
-          exit 1
+          REASON="${{ steps.extract-reason.outputs.reason }}"
 
-      - name: Comment and Close
-        run: |
-          REASON=${{ github.event.inputs.reason }}
-          if [ -z "$REASON" ]; then
-            COMMENT="❌ Rejected by @${{ github.actor }}."
+          if [ -z "$REASON" ] || [ "$REASON" = "" ]; then
+            COMMENT="**Rejected by @${{ github.event.comment.user.login }}**
+
+          This professor details update request has been rejected.
+
+          This issue is now closed."
           else
-            COMMENT="❌ Rejected by @${{ github.actor }}. Reason: $REASON"
+            COMMENT="**Rejected by @${{ github.event.comment.user.login }}**
+
+          This professor details update request has been rejected.
+
+          **Reason:** $REASON
+
+          This issue is now closed."
           fi
-          gh issue comment ${{ github.event.inputs.issue }} --body "$COMMENT"
-          gh issue close ${{ github.event.inputs.issue }}
+
+          gh issue comment ${{ github.event.issue.number }} --body "$COMMENT"
+          gh issue close ${{ github.event.issue.number }} --reason "not planned"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
