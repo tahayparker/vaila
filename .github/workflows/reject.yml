@@ -12,10 +12,27 @@ on:
 
 jobs:
   reject:
-    if: contains(github.event.issue.labels.*.name, 'contact')
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check if issue has "contact" label
+        id: check-label
+        run: |
+          LABELS=$(gh issue view ${{ github.event.inputs.issue }} --json labels -q '.labels[].name')
+          if echo "$LABELS" | grep -qw "contact"; then
+            echo "has_contact=true" >> $GITHUB_ENV
+          else
+            echo "has_contact=false" >> $GITHUB_ENV
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail if missing label
+        if: env.has_contact != 'true'
+        run: |
+          echo "❌ Issue does not have the 'contact' label. Skipping."
+          exit 1
+
       - name: Comment and Close
         run: |
           REASON=${{ github.event.inputs.reason }}
