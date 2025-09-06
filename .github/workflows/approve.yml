@@ -1,81 +1,118 @@
-name: Approve Contact
+name: Approve Professor Details Update
 
 on:
-  workflow_dispatch:
-    inputs:
-      issue:
-        description: 'Issue number'
-        required: true
+  issue_comment:
+    types: [created]
 
 jobs:
   approve:
     runs-on: ubuntu-latest
+    # Only run if comment is "approve" and issue has "contact" label
+    if: |
+      github.event.comment.body == 'approve' &&
+      contains(github.event.issue.labels.*.name, 'contact') &&
+      github.event.issue.state == 'open'
 
     steps:
-      - name: Check if issue has "contact" label
-        id: check-label
+      - name: Extract professor details from issue
+        id: extract
         run: |
-          LABELS=$(gh issue view ${{ github.event.inputs.issue }} --json labels -q '.labels[].name')
-          echo "labels=$LABELS" >> $GITHUB_ENV
-          if echo "$LABELS" | grep -qw "contact"; then
-            echo "has_contact=true" >> $GITHUB_ENV
-          else
-            echo "has_contact=false" >> $GITHUB_ENV
-          fi
+          BODY=$(gh issue view ${{ github.event.issue.number }} --json body -q .body)
+
+          # Extract full name (after "**Full name**:")
+          NAME=$(echo "$BODY" | grep -i "Full name" | sed 's/.*Full name.*: *//' | sed 's/\[Enter name here\]//' | xargs)
+
+          # Extract email (after "Email:")
+          EMAIL=$(echo "$BODY" | grep -i "Email:" | sed 's/.*Email: *//' | sed 's/\[Enter email.*\]//' | xargs)
+
+          # Extract phone (after "Phone:")
+          PHONE=$(echo "$BODY" | grep -i "Phone:" | sed 's/.*Phone: *//' | sed 's/\[Enter phone.*\]//' | xargs)
+
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "email=$EMAIL" >> $GITHUB_OUTPUT
+          echo "phone=$PHONE" >> $GITHUB_OUTPUT
+
+          echo "Extracted details:"
+          echo "Name: '$NAME'"
+          echo "Email: '$EMAIL'"
+          echo "Phone: '$PHONE'"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fail if missing label
-        if: env.has_contact != 'true'
-        run: |
-          echo "❌ Issue does not have the 'contact' label. Skipping."
-          exit 1
-
-      - name: Extract issue body
-        id: issue
-        run: |
-          body=$(gh issue view ${{ github.event.inputs.issue }} --json body -q .body)
-
-          name=$(echo "$body" | grep -i "Full name:" | sed 's/Full name:[ ]*//')
-          email=$(echo "$body" | grep -i "Email:" | sed 's/Email:[ ]*//')
-          phone=$(echo "$body" | grep -i "Phone:" | sed 's/Phone:[ ]*//')
-
-          echo "name=$name" >> $GITHUB_OUTPUT
-          echo "email=$email" >> $GITHUB_OUTPUT
-          echo "phone=$phone" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update Supabase
+      - name: Update professor details in database
         run: |
           set -e
+
+          # Build UPDATE query based on provided fields
+          UPDATE_FIELDS=""
+          if [ -n "${{ steps.extract.outputs.email }}" ] && [ "${{ steps.extract.outputs.email }}" != "" ]; then
+            UPDATE_FIELDS="\"Email\" = '${{ steps.extract.outputs.email }}'"
+          fi
+
+          if [ -n "${{ steps.extract.outputs.phone }}" ] && [ "${{ steps.extract.outputs.phone }}" != "" ]; then
+            if [ -n "$UPDATE_FIELDS" ]; then
+              UPDATE_FIELDS="$UPDATE_FIELDS, \"Phone\" = '${{ steps.extract.outputs.phone }}'"
+            else
+              UPDATE_FIELDS="\"Phone\" = '${{ steps.extract.outputs.phone }}'"
+            fi
+          fi
+
+          if [ -z "$UPDATE_FIELDS" ]; then
+            echo "No valid email or phone provided for update"
+            gh issue comment ${{ github.event.issue.number }} \
+              --body "**Approval failed**: No valid email or phone number found in the issue to update."
+            exit 1
+          fi
+
+          # Update the database
           RESULT=$(psql $DATABASE_URL -t -c "
             WITH updated AS (
               UPDATE \"Teacher\"
-              SET
-                \"Email\" = CASE WHEN '${{ steps.issue.outputs.email }}' <> '' THEN '${{ steps.issue.outputs.email }}' ELSE \"Email\" END,
-                \"Phone\" = CASE WHEN '${{ steps.issue.outputs.phone }}' <> '' THEN '${{ steps.issue.outputs.phone }}' ELSE \"Phone\" END
-              WHERE \"Name\" = '${{ steps.issue.outputs.name }}'
+              SET $UPDATE_FIELDS
+              WHERE \"Name\" ILIKE '${{ steps.extract.outputs.name }}'
               RETURNING *
             )
             SELECT COUNT(*) FROM updated;
           ")
-          COUNT=$(echo $RESULT | xargs)
 
+          COUNT=$(echo $RESULT | xargs)
           if [ "$COUNT" -eq 0 ]; then
-            echo "Professor not found in DB."
-            gh issue comment ${{ github.event.inputs.issue }} \
-              --body "⚠️ Approval failed: Professor **${{ steps.issue.outputs.name }}** not found in database."
+            echo "Professor not found in database"
+            gh issue comment ${{ github.event.issue.number }} \
+              --body "**Approval failed**: Professor **${{ steps.extract.outputs.name }}** not found in database. Please verify the exact name spelling."
             exit 1
           fi
+
+          echo "Successfully updated $COUNT professor record(s)"
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Close Issue as Approved
+      - name: Add approval comment and close issue
         run: |
-          gh issue comment ${{ github.event.inputs.issue }} \
-            --body "✅ Approved by @${{ github.actor }}. Updated fields: Email=${{ steps.issue.outputs.email }}, Phone=${{ steps.issue.outputs.phone }}."
-          gh issue close ${{ github.event.inputs.issue }}
+          UPDATED_FIELDS=""
+          if [ -n "${{ steps.extract.outputs.email }}" ] && [ "${{ steps.extract.outputs.email }}" != "" ]; then
+            UPDATED_FIELDS="📧 Email: \`${{ steps.extract.outputs.email }}\`"
+          fi
+
+          if [ -n "${{ steps.extract.outputs.phone }}" ] && [ "${{ steps.extract.outputs.phone }}" != "" ]; then
+            if [ -n "$UPDATED_FIELDS" ]; then
+              UPDATED_FIELDS="$UPDATED_FIELDS<br>Phone: \`${{ steps.extract.outputs.phone }}\`"
+            else
+              UPDATED_FIELDS="Phone: \`${{ steps.extract.outputs.phone }}\`"
+            fi
+          fi
+
+          gh issue comment ${{ github.event.issue.number }} \
+            --body "**Approved by @${{ github.event.comment.user.login }}**
+
+          Professor **${{ steps.extract.outputs.name }}** details have been successfully updated in the database.
+
+          **Updated fields:**
+          $UPDATED_FIELDS
+
+          This issue is now closed."
+
+          gh issue close ${{ github.event.issue.number }} --reason completed
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
