@@ -57,25 +57,46 @@ jobs:
           echo "Email: '$EMAIL'"
           echo "Phone: '$PHONE'"
 
+      - name: Setup Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Python dependencies
+        run: |
+          cd scripts
+          pip install -r requirements.txt
+
       - name: Update professor details in database
         run: |
           set -e
 
-          # Build UPDATE query based on provided fields
-          UPDATE_FIELDS=""
-          if [ -n "${{ steps.extract.outputs.email }}" ] && [ "${{ steps.extract.outputs.email }}" != "" ]; then
-            UPDATE_FIELDS="\"Email\" = '${{ steps.extract.outputs.email }}'"
+          NAME="${{ steps.extract.outputs.name }}"
+          EMAIL="${{ steps.extract.outputs.email }}"
+          PHONE="${{ steps.extract.outputs.phone }}"
+
+          echo "Updating professor: $NAME"
+          echo "Email: $EMAIL"
+          echo "Phone: $PHONE"
+
+          # Build command arguments
+          ARGS=("$NAME")
+
+          # Add email if provided and not "[Not provided]"
+          if [ -n "$EMAIL" ] && [ "$EMAIL" != "" ] && [ "$EMAIL" != "[Not provided]" ]; then
+            ARGS+=("--email" "$EMAIL")
           fi
 
-          if [ -n "${{ steps.extract.outputs.phone }}" ] && [ "${{ steps.extract.outputs.phone }}" != "" ]; then
-            if [ -n "$UPDATE_FIELDS" ]; then
-              UPDATE_FIELDS="$UPDATE_FIELDS, \"Phone\" = '${{ steps.extract.outputs.phone }}'"
-            else
-              UPDATE_FIELDS="\"Phone\" = '${{ steps.extract.outputs.phone }}'"
-            fi
+          # Add phone if provided and not "[Not provided]"
+          if [ -n "$PHONE" ] && [ "$PHONE" != "" ] && [ "$PHONE" != "[Not provided]" ]; then
+            ARGS+=("--phone" "$PHONE")
           fi
 
-          if [ -z "$UPDATE_FIELDS" ]; then
+          # Check if we have at least one field to update
+          if [ ${#ARGS[@]} -eq 1 ]; then
             echo "No valid email or phone provided for update"
             # Create comment using GitHub API
             curl -s -X POST \
@@ -86,32 +107,13 @@ jobs:
             exit 1
           fi
 
-          # Update the database
-          RESULT=$(psql $DATABASE_URL -t -c "
-            WITH updated AS (
-              UPDATE \"Teacher\"
-              SET $UPDATE_FIELDS
-              WHERE \"Name\" ILIKE '${{ steps.extract.outputs.name }}'
-              RETURNING *
-            )
-            SELECT COUNT(*) FROM updated;
-          ")
+          # Run the Python script
+          cd scripts
+          python update_professor_details.py "${ARGS[@]}"
 
-          COUNT=$(echo $RESULT | xargs)
-          if [ "$COUNT" -eq 0 ]; then
-            echo "Professor not found in database"
-            # Create comment using GitHub API
-            curl -s -X POST \
-              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Content-Type: application/json" \
-              -d "{\"body\": \"**Approval failed**: Professor **${{ steps.extract.outputs.name }}** not found in database. Please verify the exact name spelling.\"}" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments"
-            exit 1
-          fi
-
-          echo "Successfully updated $COUNT professor record(s)"
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
       - name: Add approval comment and close issue
         run: |
