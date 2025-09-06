@@ -12,6 +12,13 @@ import {
 import { getDay } from "date-fns";
 // UPDATED: Using User icon for the header
 import { AlertCircle, User } from "lucide-react";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-montserrat",
+});
 
 // --- Data Structures ---
 // UPDATED: Interface for professor data within a day's schedule
@@ -217,7 +224,9 @@ export default function GraphPage() {
               {" "}
               <SelectValue placeholder="Select a day" />{" "}
             </SelectTrigger>
-            <SelectContent className="bg-black/80 backdrop-blur-md border-white/20 text-white">
+            <SelectContent
+              className={`bg-black/80 backdrop-blur-md border-white/20 text-white font-sans ${montserrat.variable}`}
+            >
               {" "}
               {daysOfWeek.map((day, index) => (
                 <SelectItem
