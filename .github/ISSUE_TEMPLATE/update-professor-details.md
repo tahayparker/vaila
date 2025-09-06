@@ -26,6 +26,7 @@ Use this template to request adding or updating a professor's institutional emai
 
 **Contact Information**  
 Email: [Enter email in format professor@uowdubai.ac.ae]
+
 Phone: [Enter phone extension (4 digits only) or formatted phone number +9715xxxxxxxx]
 
 ## Source / proof
