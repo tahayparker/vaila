@@ -18,7 +18,6 @@ Use this template to request adding or updating a professor's institutional emai
 
 ## Professor details
 **Full name**: [Enter name here]
-**Faculty**: [Enter faculty here]
 
 **Contact type  (type x between brackets)**  
 - [ ] Email  
