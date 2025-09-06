@@ -9,21 +9,36 @@ on:
 
 jobs:
   approve:
-    if: contains(github.event.issue.labels.*.name, 'contact')
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check if issue has "contact" label
+        id: check-label
+        run: |
+          LABELS=$(gh issue view ${{ github.event.inputs.issue }} --json labels -q '.labels[].name')
+          echo "labels=$LABELS" >> $GITHUB_ENV
+          if echo "$LABELS" | grep -qw "contact"; then
+            echo "has_contact=true" >> $GITHUB_ENV
+          else
+            echo "has_contact=false" >> $GITHUB_ENV
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail if missing label
+        if: env.has_contact != 'true'
+        run: |
+          echo "❌ Issue does not have the 'contact' label. Skipping."
+          exit 1
+
       - name: Extract issue body
         id: issue
         run: |
           body=$(gh issue view ${{ github.event.inputs.issue }} --json body -q .body)
-          echo "body<<EOF" >> $GITHUB_ENV
-          echo "$body" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
 
-          name=$(echo "$body" | awk -F'|' '/\|/{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//' | head -n 1)
-          email=$(echo "$body" | awk -F'|' '/\|/{print $3}' | sed 's/^[ \t]*//;s/[ \t]*$//' | head -n 1)
-          phone=$(echo "$body" | awk -F'|' '/\|/{print $4}' | sed 's/^[ \t]*//;s/[ \t]*$//' | head -n 1)
+          name=$(echo "$body" | grep -i "Full name:" | sed 's/Full name:[ ]*//')
+          email=$(echo "$body" | grep -i "Email:" | sed 's/Email:[ ]*//')
+          phone=$(echo "$body" | grep -i "Phone:" | sed 's/Phone:[ ]*//')
 
           echo "name=$name" >> $GITHUB_OUTPUT
           echo "email=$email" >> $GITHUB_OUTPUT
