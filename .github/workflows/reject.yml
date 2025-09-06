@@ -11,11 +11,12 @@ permissions:
 jobs:
   reject:
     runs-on: ubuntu-latest
-    # Only run if comment starts with "reject" and issue has "contact" label
+    # Only run if comment starts with "reject", issue has "contact" label, and commenter is tahayparker
     if: |
       startsWith(github.event.comment.body, 'reject') &&
       contains(github.event.issue.labels.*.name, 'contact') &&
-      github.event.issue.state == 'open'
+      github.event.issue.state == 'open' &&
+      github.event.comment.user.login == 'tahayparker'
 
     steps:
       - name: Extract rejection reason
