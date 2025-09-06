@@ -11,14 +11,21 @@ permissions:
 jobs:
   reject:
     runs-on: ubuntu-latest
-    # Only run if comment starts with "reject", issue has "contact" label, and commenter is tahayparker
+    # Only run if comment starts with "reject" (but not "approve"), issue has "contact" label, and commenter is tahayparker
     if: |
       startsWith(github.event.comment.body, 'reject') &&
+      github.event.comment.body != 'approve' &&
       contains(github.event.issue.labels.*.name, 'contact') &&
       github.event.issue.state == 'open' &&
       github.event.comment.user.login == 'tahayparker'
 
     steps:
+      - name: Debug comment information
+        run: |
+          echo "Comment body: '${{ github.event.comment.body }}'"
+          echo "Comment user: ${{ github.event.comment.user.login }}"
+          echo "Issue state: ${{ github.event.issue.state }}"
+          echo "Issue labels: ${{ toJson(github.event.issue.labels.*.name) }}"
       - name: Extract rejection reason
         id: extract-reason
         run: |
