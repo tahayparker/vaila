@@ -29,8 +29,6 @@ TIME_SLOTS = [ # Keep time slots as defined
 SCRIPT_DIR = Path(__file__).parent
 # Output file remains the same, but content structure will change
 OUTPUT_JSON_PATH = SCRIPT_DIR.parent / "public" / "scheduleData.json"
-# Define placeholder/common teacher names to ignore
-PLACEHOLDER_TEACHER_NAMES = {'Unknown', 'TBA', 'Staff'} # Case-sensitive
 
 # --- Supabase Client Initialization ---
 try:
@@ -50,16 +48,17 @@ ProfessorTimingsDict = DefaultDict[str, DefaultDict[str, List[Tuple[str, str]]]]
 
 def fetch_scheduled_teachers() -> List[str]:
     """
-    Fetches unique, non-placeholder teacher names from the 'Timings' table.
+    Fetches unique teacher names from the 'Timings' table.
     Returns a sorted list of teacher names.
     """
-    print("Fetching scheduled teachers from Timings data (excluding placeholders)...")
+    print("Fetching scheduled teachers from Timings data...")
     teacher_names: Set[str] = set()
     try:
         response = (
             supabase.table("Timings")
             .select("Teacher")
             .neq("Teacher", None) # Ensure Teacher is not null
+            .order("Teacher") # Add explicit ordering for consistency
             .execute()
         )
 
@@ -67,7 +66,7 @@ def fetch_scheduled_teachers() -> List[str]:
             count = 0
             for timing in response.data:
                 teacher = timing.get("Teacher")
-                if teacher and teacher.strip() and teacher not in PLACEHOLDER_TEACHER_NAMES:
+                if teacher and teacher.strip():
                     teacher_names.add(teacher.strip())
                     count += 1
             print(f"Found {len(teacher_names)} unique scheduled teachers from {count} relevant timing entries.")
@@ -98,6 +97,7 @@ def fetch_all_professor_timings() -> ProfessorTimingsDict:
             supabase.table("Timings")
             .select("Day, Teacher, StartTime, EndTime")
             .neq("Teacher", None) # Ensure Teacher is not null
+            .order("Day, Teacher, StartTime") # Add explicit ordering for consistency
             .execute()
         )
 
@@ -109,9 +109,8 @@ def fetch_all_professor_timings() -> ProfessorTimingsDict:
                 start_time = timing.get("StartTime")
                 end_time = timing.get("EndTime")
 
-                # Validate data and exclude placeholders
-                if day and teacher_name and start_time and end_time and \
-                   teacher_name.strip() and teacher_name not in PLACEHOLDER_TEACHER_NAMES:
+                # Validate data - include all teachers
+                if day and teacher_name and start_time and end_time and teacher_name.strip():
                     # Group by Day, then by Teacher Name
                     timings_by_day[day][teacher_name.strip()].append((start_time, end_time))
                     processed_count += 1
