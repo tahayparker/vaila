@@ -1,7 +1,7 @@
 ---
 name: Update Professor Details
 about: Request to add or update a professor's email address or phone number on vaila.
-  Include proof of consent/source.
+  Include proof of source.
 title: "[Add Contact] {Professor Full Name}"
 labels: contact
 assignees: ''
