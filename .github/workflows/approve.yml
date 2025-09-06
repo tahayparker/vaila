@@ -28,7 +28,10 @@ jobs:
       - name: Extract professor details from issue
         id: extract
         run: |
-          BODY=$(gh issue view ${{ github.event.issue.number }} --json body -q .body)
+          # Get issue body using GitHub API
+          ISSUE_DATA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}")
+          BODY=$(echo "$ISSUE_DATA" | jq -r '.body')
 
           # Extract full name (after "**Full name**:")
           NAME=$(echo "$BODY" | grep -i "Full name" | sed 's/.*Full name.*: *//' | sed 's/\[Enter name here\]//' | xargs)
@@ -47,8 +50,6 @@ jobs:
           echo "Name: '$NAME'"
           echo "Email: '$EMAIL'"
           echo "Phone: '$PHONE'"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update professor details in database
         run: |
@@ -70,8 +71,12 @@ jobs:
 
           if [ -z "$UPDATE_FIELDS" ]; then
             echo "No valid email or phone provided for update"
-            gh issue comment ${{ github.event.issue.number }} \
-              --body "**Approval failed**: No valid email or phone number found in the issue to update."
+            # Create comment using GitHub API
+            curl -s -X POST \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d '{"body": "**Approval failed**: No valid email or phone number found in the issue to update."}' \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments"
             exit 1
           fi
 
@@ -89,15 +94,18 @@ jobs:
           COUNT=$(echo $RESULT | xargs)
           if [ "$COUNT" -eq 0 ]; then
             echo "Professor not found in database"
-            gh issue comment ${{ github.event.issue.number }} \
-              --body "**Approval failed**: Professor **${{ steps.extract.outputs.name }}** not found in database. Please verify the exact name spelling."
+            # Create comment using GitHub API
+            curl -s -X POST \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "{\"body\": \"**Approval failed**: Professor **${{ steps.extract.outputs.name }}** not found in database. Please verify the exact name spelling.\"}" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments"
             exit 1
           fi
 
           echo "Successfully updated $COUNT professor record(s)"
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Add approval comment and close issue
         run: |
@@ -114,8 +122,8 @@ jobs:
             fi
           fi
 
-          gh issue comment ${{ github.event.issue.number }} \
-            --body "**Approved by @${{ github.event.comment.user.login }}**
+          # Create success comment using GitHub API
+          COMMENT_BODY="**Approved by @${{ github.event.comment.user.login }}**
 
           Professor **${{ steps.extract.outputs.name }}** details have been successfully updated in the database.
 
@@ -124,6 +132,15 @@ jobs:
 
           This issue is now closed."
 
-          gh issue close ${{ github.event.issue.number }} --reason completed
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          curl -s -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"body\": $(echo "$COMMENT_BODY" | jq -Rs .)}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments"
+
+          # Close issue using GitHub API
+          curl -s -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"state": "closed", "state_reason": "completed"}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}"
