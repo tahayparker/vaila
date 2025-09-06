@@ -47,6 +47,13 @@ import {
   addMinutes,
 } from "date-fns";
 import Fuse from "fuse.js";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-montserrat",
+});
 
 // --- Data Structures ---
 // Interface for data fetched for the dropdown (name is sufficient)
@@ -349,10 +356,12 @@ export default function CheckAvailabilityPage() {
                 role="combobox"
                 aria-expanded={comboboxOpen}
                 disabled={isLoadingTeachers || !!teacherFetchError}
-                className="w-full justify-between bg-black/20 border-white/20 hover:bg-black/30 hover:border-white/30 text-white disabled:opacity-70 disabled:cursor-not-allowed"
+                className={`w-full justify-between bg-black/20 border-white/20 hover:bg-black/30 hover:border-white/30 text-white disabled:opacity-70 disabled:cursor-not-allowed font-sans ${montserrat.className}`}
               >
                 <span className="flex items-center justify-between w-full">
-                  <span className="truncate flex items-center gap-2">
+                  <span
+                    className={`truncate flex items-center gap-2 font-sans ${montserrat.className}`}
+                  >
                     {" "}
                     <Users className="w-4 h-4 text-gray-400 flex-shrink-0" />{" "}
                     {isLoadingTeachers
@@ -368,9 +377,8 @@ export default function CheckAvailabilityPage() {
               </Button>
             </PopoverTrigger>
             <PopoverContent
-              className="max-h-[--radix-popover-content-available-height] p-0 bg-black/80 backdrop-blur-md border-white/20 text-white"
+              className={`max-h-[--radix-popover-content-available-height] p-0 bg-black/80 backdrop-blur-md border-white/20 text-white font-sans ${montserrat.className}`}
               style={{
-                fontFamily: "inherit",
                 width: "var(--radix-popover-trigger-width)",
               }}
             >
@@ -391,7 +399,7 @@ export default function CheckAvailabilityPage() {
                     placeholder="Search professor..."
                     value={searchQuery}
                     onValueChange={setSearchQuery}
-                    className="h-9 text-white placeholder:text-gray-400 border-0 border-b border-white/20 rounded-none ring-offset-0 focus-visible:ring-0 focus-visible:border-b-purple-500"
+                    className={`h-9 text-white placeholder:text-gray-400 border-0 border-b border-white/20 rounded-none ring-offset-0 focus-visible:ring-0 focus-visible:border-b-purple-500 font-sans ${montserrat.className}`}
                   />{" "}
                   <CommandList className="hide-scrollbar">
                     {" "}
@@ -412,7 +420,7 @@ export default function CheckAvailabilityPage() {
                             setComboboxOpen(false);
                             setSearchQuery("");
                           }}
-                          className="font-sans aria-selected:bg-purple-600/30 aria-selected:text-white text-sm cursor-pointer"
+                          className={`font-sans aria-selected:bg-purple-600/30 aria-selected:text-white text-sm cursor-pointer font-sans ${montserrat.className}`}
                         >
                           {" "}
                           {teacher.name}{" "}
@@ -447,7 +455,9 @@ export default function CheckAvailabilityPage() {
               {" "}
               <SelectValue placeholder="Select a day" />{" "}
             </SelectTrigger>
-            <SelectContent className="bg-black/80 backdrop-blur-md border-white/20 text-white">
+            <SelectContent
+              className={`bg-black/80 backdrop-blur-md border-white/20 text-white font-sans ${montserrat.className}`}
+            >
               {" "}
               {daysOfWeek.map((d) => (
                 <SelectItem
@@ -483,7 +493,9 @@ export default function CheckAvailabilityPage() {
               {" "}
               <SelectValue placeholder="Select start time" />{" "}
             </SelectTrigger>
-            <SelectContent className="bg-black/80 backdrop-blur-md border-white/20 text-white max-h-60">
+            <SelectContent
+              className={`bg-black/80 backdrop-blur-md border-white/20 text-white max-h-60 font-sans ${montserrat.className}`}
+            >
               {" "}
               {timeSlots.map((t) => (
                 <SelectItem
@@ -519,7 +531,9 @@ export default function CheckAvailabilityPage() {
               {" "}
               <SelectValue placeholder="Select end time" />{" "}
             </SelectTrigger>
-            <SelectContent className="bg-black/80 backdrop-blur-md border-white/20 text-white max-h-60">
+            <SelectContent
+              className={`bg-black/80 backdrop-blur-md border-white/20 text-white max-h-60 font-sans ${montserrat.className}`}
+            >
               {" "}
               {timeSlots.map((t) => (
                 <SelectItem
@@ -545,7 +559,7 @@ export default function CheckAvailabilityPage() {
           <Button
             type="submit"
             disabled={isChecking || isLoadingTeachers || !!teacherFetchError}
-            className="col-span-2 md:flex-1 bg-purple-600 hover:bg-purple-700 text-white rounded-full px-5 py-2.5 text-sm font-medium flex items-center justify-center gap-2 disabled:opacity-60"
+            className="md:flex-1 bg-purple-600 hover:bg-purple-700 text-white rounded-full px-5 py-2.5 text-sm font-medium flex items-center justify-center gap-2 disabled:opacity-60"
           >
             {" "}
             {isChecking ? (
@@ -553,7 +567,8 @@ export default function CheckAvailabilityPage() {
             ) : (
               <Search className="w-4 h-4" />
             )}{" "}
-            Check Availability{" "}
+            <span className="hidden md:inline">Check Availability</span>
+            <span className="md:hidden">Check</span>{" "}
           </Button>
           <Button
             type="button"
