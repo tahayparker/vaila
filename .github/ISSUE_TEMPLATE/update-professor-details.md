@@ -30,7 +30,7 @@ Email: [Enter email in format professor@uowdubai.ac.ae]
 Phone: [Enter phone extension (4 digits only) or formatted phone number +9715xxxxxxxx]
 
 ## Source / proof
-Provide a URL or attach evidence that the contact is accurate. Could be a link, a text, email, etc.
+**Provide a URL or attach evidence that the contact is accurate. Could be a link, a text, email, etc.**
 [Enter proof here]
 
 ## Additional context
