@@ -98,7 +98,8 @@ export default function AddProfessorDetailsPage() {
   const [showValidationErrors, setShowValidationErrors] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileError, setTurnstileError] = useState<string | null>(null);
-  const [testMode, setTestMode] = useState(false); // --- Effects ---
+  const [testMode, setTestMode] = useState(false);
+  const [turnstileKey, setTurnstileKey] = useState(0); // Key to force Turnstile re-render // --- Effects ---
   useEffect(() => {
     const fetchTeachers = async () => {
       setIsLoadingTeachers(true);
@@ -541,6 +542,8 @@ ${localDateTime}`; // Create the GitHub issue using GitHub API
     setSearchQuery("");
     setTurnstileToken(null);
     setTurnstileError(null);
+    // Force Turnstile component to re-render by changing its key
+    setTurnstileKey(prev => prev + 1);
   };
 
   // --- Animation Variants ---
@@ -755,6 +758,7 @@ ${localDateTime}`; // Create the GitHub issue using GitHub API
               </label>
               <div className="w-full">
                 <Turnstile
+                  key={turnstileKey} // Force re-render when key changes
                   siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
                   onSuccess={(token) => {
                     setTurnstileToken(token);
