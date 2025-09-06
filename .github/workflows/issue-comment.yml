@@ -2,7 +2,7 @@ name: Comment on Professor Issue
 
 on:
   issues:
-    types: [opened, labeled]
+    types: [opened]
 
 permissions:
   issues: write
@@ -15,14 +15,23 @@ jobs:
     if: contains(github.event.issue.labels.*.name, 'contact')
 
     steps:
-      - name: Debug issue information
+      - name: Check if instruction comment already exists
+        id: check-comment
         run: |
-          echo "Issue number: ${{ github.event.issue.number }}"
-          echo "Issue title: ${{ github.event.issue.title }}"
-          echo "Issue labels: ${{ toJson(github.event.issue.labels.*.name) }}"
-          echo "Event action: ${{ github.event.action }}"
+          # Check if a comment with the review instructions already exists
+          EXISTING_COMMENT=$(gh issue view ${{ github.event.issue.number }} --json comments -q '.comments[] | select(.body | contains("Review Professor Details Update")) | .id')
+          if [ -n "$EXISTING_COMMENT" ]; then
+            echo "comment_exists=true" >> $GITHUB_OUTPUT
+            echo "Instruction comment already exists, skipping"
+          else
+            echo "comment_exists=false" >> $GITHUB_OUTPUT
+            echo "No instruction comment found, will create one"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Add Approve/Reject instructions
+        if: steps.check-comment.outputs.comment_exists == 'false'
         uses: peter-evans/create-or-update-comment@v4
         with:
           issue-number: ${{ github.event.issue.number }}
@@ -39,6 +48,3 @@ jobs:
             **Instructions:**
             - To **approve**: Simply comment `approve` on this issue
             - To **reject**: Comment `reject` or `reject: reason for rejection` on this issue
-            - The workflows will run automatically when **@tahayparker** comments
-
-            *Note: Only @tahayparker can approve/reject professor details updates.*
