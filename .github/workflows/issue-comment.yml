@@ -1,0 +1,24 @@
+name: Comment on Professor Issue
+
+on:
+  issues:
+    types: [opened, labeled]
+
+jobs:
+  comment:
+    if: |
+      contains(github.event.issue.labels.*.name, 'contact') &&
+      contains(github.event.issue.body, 'Full name:') &&
+      contains(github.event.issue.body, 'Email:') &&
+      contains(github.event.issue.body, 'Phone:')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add Approve/Reject table
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            | Action |
+            | :--- |
+            | [Approve](../../actions/workflows/approve.yml?issue=${{ github.event.issue.number }}) |
+            | [Reject](../../actions/workflows/reject.yml?issue=${{ github.event.issue.number }}) |
