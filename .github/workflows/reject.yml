@@ -46,13 +46,13 @@ jobs:
           REASON="${{ steps.extract-reason.outputs.reason }}"
 
           if [ -z "$REASON" ] || [ "$REASON" = "" ]; then
-            COMMENT="**Rejected by @${{ github.event.comment.user.login }}**
+            COMMENT_BODY="**Rejected by @${{ github.event.comment.user.login }}**
 
           This professor details update request has been rejected.
 
           This issue is now closed."
           else
-            COMMENT="**Rejected by @${{ github.event.comment.user.login }}**
+            COMMENT_BODY="**Rejected by @${{ github.event.comment.user.login }}**
 
           This professor details update request has been rejected.
 
@@ -61,7 +61,16 @@ jobs:
           This issue is now closed."
           fi
 
-          gh issue comment ${{ github.event.issue.number }} --body "$COMMENT"
-          gh issue close ${{ github.event.issue.number }} --reason "not planned"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Create rejection comment using GitHub API
+          curl -s -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"body\": $(echo "$COMMENT_BODY" | jq -Rs .)}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments"
+
+          # Close issue using GitHub API
+          curl -s -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"state": "closed", "state_reason": "not_planned"}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}"
