@@ -18,17 +18,20 @@ jobs:
       - name: Check if instruction comment already exists
         id: check-comment
         run: |
-          # Check if a comment with the review instructions already exists
-          EXISTING_COMMENT=$(gh issue view ${{ github.event.issue.number }} --json comments -q '.comments[] | select(.body | contains("Review Professor Details Update")) | .id')
-          if [ -n "$EXISTING_COMMENT" ]; then
+          # Check if a comment with the review instructions already exists using GitHub API
+          COMMENTS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments")
+
+          # Check if any comment contains the review instructions
+          EXISTING_COMMENT=$(echo "$COMMENTS" | jq -r '.[] | select(.body | contains("Review Professor Details Update")) | .id')
+
+          if [ -n "$EXISTING_COMMENT" ] && [ "$EXISTING_COMMENT" != "null" ]; then
             echo "comment_exists=true" >> $GITHUB_OUTPUT
-            echo "Instruction comment already exists, skipping"
+            echo "Instruction comment already exists (ID: $EXISTING_COMMENT), skipping"
           else
             echo "comment_exists=false" >> $GITHUB_OUTPUT
             echo "No instruction comment found, will create one"
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Add Approve/Reject instructions
         if: steps.check-comment.outputs.comment_exists == 'false'
