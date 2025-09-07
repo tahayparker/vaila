@@ -1,7 +1,7 @@
 // src/pages/graph.tsx
 import { useState, useEffect } from "react";
 import Head from "next/head";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import {
   Select,
   SelectContent,
@@ -185,6 +185,70 @@ export default function GraphPage() {
     exit: { opacity: 0, x: 15, transition: { duration: 0.15, ease: "easeIn" } },
   };
 
+  // Column animation variants
+  const columnVariants = {
+    expanded: {
+      width: "auto",
+      minWidth: "200px",
+      transition: {
+        type: "tween",
+        duration: 0.15,
+        ease: "easeInOut",
+      }
+    },
+    collapsed: {
+      width: "48px",
+      minWidth: "48px",
+      transition: {
+        type: "tween",
+        duration: 0.15,
+        ease: "easeInOut",
+      }
+    }
+  };
+
+  const textVariants = {
+    expanded: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        type: "tween",
+        duration: 0.1,
+        ease: "easeOut",
+      }
+    },
+    collapsed: {
+      opacity: 0,
+      scale: 0.8,
+      transition: {
+        type: "tween",
+        duration: 0.1,
+        ease: "easeIn",
+      }
+    }
+  };
+
+  const initialsVariants = {
+    expanded: {
+      opacity: 0,
+      scale: 0.8,
+      transition: {
+        type: "tween",
+        duration: 0.1,
+        ease: "easeIn",
+      }
+    },
+    collapsed: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        type: "tween",
+        duration: 0.1,
+        ease: "easeOut",
+      }
+    }
+  };
+
   // --- Helper Functions ---
   // getCellColor remains the same
   const getCellColor = (avail: number) => {
@@ -325,12 +389,10 @@ export default function GraphPage() {
                 <thead className="sticky top-0 z-30">
                   <tr>
                     {/* UPDATED: Header for Professor column */}
-                    <th
-                      className="sticky left-0 top-0 bg-black text-white z-40 border-r border-b border-white/15 text-right text-sm font-semibold cursor-pointer hover:bg-zinc-900 transition-all duration-300 ease-in-out md:cursor-default md:hover:bg-black"
-                      style={{
-                        width: isColumnCollapsed ? '48px' : 'auto',
-                        minWidth: isColumnCollapsed ? '48px' : 'auto'
-                      }}
+                    <motion.th
+                      className="sticky left-0 top-0 bg-black text-white z-40 border-r border-b border-white/15 text-right text-sm font-semibold cursor-pointer hover:bg-zinc-900 transition-all duration-300 ease-in-out md:cursor-default md:hover:bg-black overflow-hidden"
+                      variants={columnVariants}
+                      animate={isColumnCollapsed ? "collapsed" : "expanded"}
                       onClick={() => {
                         // Only toggle on mobile (screen width < 768px)
                         if (window.innerWidth < 768) {
@@ -338,17 +400,43 @@ export default function GraphPage() {
                         }
                       }}
                     >
-                      <div className="h-full w-full px-3 py-3 flex items-center justify-center">
-                        {isColumnCollapsed ? (
-                          <User className="w-4 h-4 opacity-80 flex-shrink-0" />
-                        ) : (
-                          <div className="flex items-center justify-end gap-1.5 w-full">
-                            <User className="w-4 h-4 opacity-80 flex-shrink-0" />
-                            <span>Professor</span>
-                          </div>
-                        )}
+                      <div className="h-full w-full px-3 py-3 flex items-center justify-center min-h-[48px] relative">
+                        <AnimatePresence mode="wait">
+                          {isColumnCollapsed ? (
+                            <motion.div
+                              key="initials"
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                              transition={{
+                                type: "tween",
+                                duration: 0.1,
+                                ease: "easeOut",
+                              }}
+                              className="flex items-center justify-center"
+                            >
+                              <User className="w-4 h-4 opacity-80 flex-shrink-0" />
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="full-text"
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                              transition={{
+                                type: "tween",
+                                duration: 0.1,
+                                ease: "easeOut",
+                              }}
+                              className="flex items-center justify-end gap-1.5 w-full"
+                            >
+                              <User className="w-4 h-4 opacity-80 flex-shrink-0" />
+                              <span>Professor</span>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
-                    </th>
+                    </motion.th>
                     {/* Time Interval Headers (Keep as is) */}
                     {timeIntervals.map((time, index) => (
                       <th
@@ -391,12 +479,10 @@ export default function GraphPage() {
                             className="group"
                           >
                             {/* Sticky Cell - Professor Name */}
-                            <td
-                              className="sticky left-0 bg-black group-hover:bg-zinc-900 text-white z-20 border-r border-b border-white/10 text-right text-sm transition-all duration-300 ease-in-out cursor-pointer md:cursor-default"
-                              style={{
-                                width: isColumnCollapsed ? '48px' : 'auto',
-                                minWidth: isColumnCollapsed ? '48px' : 'auto'
-                              }}
+                            <motion.td
+                              className="sticky left-0 bg-black group-hover:bg-zinc-900 text-white z-20 border-r border-b border-white/10 text-right text-sm transition-all duration-300 ease-in-out cursor-pointer md:cursor-default overflow-hidden"
+                              variants={columnVariants}
+                              animate={isColumnCollapsed ? "collapsed" : "expanded"}
                               onClick={() => {
                                 // Only toggle on mobile (screen width < 768px)
                                 if (window.innerWidth < 768) {
@@ -405,18 +491,42 @@ export default function GraphPage() {
                               }}
                               title={getProfessorName(profData.professor)}
                             >
-                              <div className="h-full w-full px-3 py-1.5 flex items-center justify-center">
-                                {isColumnCollapsed ? (
-                                  <span className="text-xs font-bold text-center">
-                                    {getProfessorInitials(profData.professor)}
-                                  </span>
-                                ) : (
-                                  <span className="text-right w-full whitespace-nowrap">
-                                    {getProfessorName(profData.professor)}
-                                  </span>
-                                )}
+                              <div className="h-full w-full px-3 py-1.5 flex items-center justify-center min-h-[36px] relative">
+                                <AnimatePresence mode="wait">
+                                  {isColumnCollapsed ? (
+                                    <motion.div
+                                      key={`initials-${profData.professor}`}
+                                      initial={{ opacity: 0, scale: 0.8 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      exit={{ opacity: 0, scale: 0.8 }}
+                                      transition={{
+                                        type: "tween",
+                                        duration: 0.1,
+                                        ease: "easeOut",
+                                      }}
+                                      className="text-xs font-bold text-center flex items-center justify-center"
+                                    >
+                                      {getProfessorInitials(profData.professor)}
+                                    </motion.div>
+                                  ) : (
+                                    <motion.div
+                                      key={`full-${profData.professor}`}
+                                      initial={{ opacity: 0, scale: 0.8 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      exit={{ opacity: 0, scale: 0.8 }}
+                                      transition={{
+                                        type: "tween",
+                                        duration: 0.1,
+                                        ease: "easeOut",
+                                      }}
+                                      className="text-right w-full whitespace-nowrap flex items-center justify-end"
+                                    >
+                                      {getProfessorName(profData.professor)}
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
                               </div>
-                            </td>
+                            </motion.td>
                             {/* Data Cells - Professor Availability */}
                             {profData.availability.map((avail, idx) => (
                               <td
