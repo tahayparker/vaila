@@ -543,7 +543,7 @@ ${localDateTime}`; // Create the GitHub issue using GitHub API
     setTurnstileToken(null);
     setTurnstileError(null);
     // Force Turnstile component to re-render by changing its key
-    setTurnstileKey(prev => prev + 1);
+    setTurnstileKey((prev) => prev + 1);
   };
 
   // --- Animation Variants ---
