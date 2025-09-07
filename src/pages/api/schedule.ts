@@ -12,7 +12,7 @@ interface FrontendProfessorData {
 
 interface FrontendScheduleDay {
   day: string;
-  rooms: FrontendProfessorData[];
+  professors: FrontendProfessorData[];
 }
 export default async function handler(
   req: NextApiRequest,
@@ -27,7 +27,42 @@ export default async function handler(
   // Middleware should handle protecting this route if needed.
   // ---
 
+  const GITHUB_JSON_URL = "https://raw.githubusercontent.com/tahayparker/vaila/refs/heads/main/public/scheduleData.json";
+
+  // First, try to fetch from GitHub
   try {
+    console.log("[API Schedule] Attempting to fetch from GitHub...");
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+    const githubResponse = await fetch(GITHUB_JSON_URL, {
+      method: "GET",
+      headers: {
+        'Accept': 'application/json',
+      },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (githubResponse.ok) {
+      const scheduleData: FrontendScheduleDay[] = await githubResponse.json();
+      if (Array.isArray(scheduleData)) {
+        console.log("[API Schedule] Successfully fetched data from GitHub");
+        return res.status(200).json(scheduleData);
+      } else {
+        throw new Error("GitHub data is not an array");
+      }
+    } else {
+      throw new Error(`GitHub fetch failed with status: ${githubResponse.status}`);
+    }
+  } catch (githubError: any) {
+    console.warn(`[API Schedule] GitHub fetch failed: ${githubError.message}, falling back to local file...`);
+  }
+
+  // Fallback to local file
+  try {
+    console.log("[API Schedule] Attempting to read local scheduleData.json...");
     const schedulePath = path.join(
       process.cwd(),
       "public",
@@ -42,10 +77,10 @@ export default async function handler(
     if (!Array.isArray(scheduleData)) {
       throw new Error("Invalid data format: scheduleData is not an array.");
     }
-    console.log("[API Schedule] Successfully read scheduleData.json");
+    console.log("[API Schedule] Successfully read local scheduleData.json");
     return res.status(200).json(scheduleData);
   } catch (error: any) {
-    console.error("Error reading or parsing schedule data:", error);
+    console.error("Error reading or parsing local schedule data:", error);
     if (error instanceof SyntaxError) {
       return res
         .status(500)
