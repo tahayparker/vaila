@@ -27,7 +27,8 @@ export default async function handler(
   // Middleware should handle protecting this route if needed.
   // ---
 
-  const GITHUB_JSON_URL = "https://raw.githubusercontent.com/tahayparker/vaila/refs/heads/main/public/scheduleData.json";
+  const GITHUB_JSON_URL =
+    "https://raw.githubusercontent.com/tahayparker/vaila/refs/heads/main/public/scheduleData.json";
 
   // First, try to fetch from GitHub
   try {
@@ -38,7 +39,7 @@ export default async function handler(
     const githubResponse = await fetch(GITHUB_JSON_URL, {
       method: "GET",
       headers: {
-        'Accept': 'application/json',
+        Accept: "application/json",
       },
       signal: controller.signal,
     });
@@ -54,10 +55,14 @@ export default async function handler(
         throw new Error("GitHub data is not an array");
       }
     } else {
-      throw new Error(`GitHub fetch failed with status: ${githubResponse.status}`);
+      throw new Error(
+        `GitHub fetch failed with status: ${githubResponse.status}`,
+      );
     }
   } catch (githubError: any) {
-    console.warn(`[API Schedule] GitHub fetch failed: ${githubError.message}, falling back to local file...`);
+    console.warn(
+      `[API Schedule] GitHub fetch failed: ${githubError.message}, falling back to local file...`,
+    );
   }
 
   // Fallback to local file
