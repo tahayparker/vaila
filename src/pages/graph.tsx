@@ -1,7 +1,12 @@
 // src/pages/graph.tsx
 import { useState, useEffect } from "react";
 import Head from "next/head";
-import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 import {
   Select,
   SelectContent,
@@ -150,8 +155,8 @@ export default function GraphPage() {
     // Set initial state
     handleResize();
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // --- Animation Variants (Keep as is) ---
@@ -194,7 +199,7 @@ export default function GraphPage() {
         type: "tween",
         duration: 0.15,
         ease: "easeInOut",
-      }
+      },
     },
     collapsed: {
       width: "48px",
@@ -203,8 +208,8 @@ export default function GraphPage() {
         type: "tween",
         duration: 0.15,
         ease: "easeInOut",
-      }
-    }
+      },
+    },
   };
 
   const textVariants = {
@@ -215,7 +220,7 @@ export default function GraphPage() {
         type: "tween",
         duration: 0.1,
         ease: "easeOut",
-      }
+      },
     },
     collapsed: {
       opacity: 0,
@@ -224,8 +229,8 @@ export default function GraphPage() {
         type: "tween",
         duration: 0.1,
         ease: "easeIn",
-      }
-    }
+      },
+    },
   };
 
   const initialsVariants = {
@@ -236,7 +241,7 @@ export default function GraphPage() {
         type: "tween",
         duration: 0.1,
         ease: "easeIn",
-      }
+      },
     },
     collapsed: {
       opacity: 1,
@@ -245,8 +250,8 @@ export default function GraphPage() {
         type: "tween",
         duration: 0.1,
         ease: "easeOut",
-      }
-    }
+      },
+    },
   };
 
   // --- Helper Functions ---
@@ -266,7 +271,7 @@ export default function GraphPage() {
     profIdentifier: string | null | undefined,
   ): string => {
     const name = getProfessorName(profIdentifier);
-    const words = name.split(' ').filter(word => word.length > 0);
+    const words = name.split(" ").filter((word) => word.length > 0);
     if (words.length >= 2) {
       return `${words[0][0]}${words[1][0]}`.toUpperCase();
     } else if (words.length === 1) {
@@ -482,7 +487,9 @@ export default function GraphPage() {
                             <motion.td
                               className="sticky left-0 bg-black group-hover:bg-zinc-900 text-white z-20 border-r border-b border-white/10 text-right text-sm transition-all duration-300 ease-in-out cursor-pointer md:cursor-default overflow-hidden"
                               variants={columnVariants}
-                              animate={isColumnCollapsed ? "collapsed" : "expanded"}
+                              animate={
+                                isColumnCollapsed ? "collapsed" : "expanded"
+                              }
                               onClick={() => {
                                 // Only toggle on mobile (screen width < 768px)
                                 if (window.innerWidth < 768) {
