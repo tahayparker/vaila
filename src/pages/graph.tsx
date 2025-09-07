@@ -90,6 +90,7 @@ export default function GraphPage() {
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isColumnCollapsed, setIsColumnCollapsed] = useState(false);
 
   // --- Data Fetching (Keep structure, check validation) ---
   useEffect(() => {
@@ -135,6 +136,24 @@ export default function GraphPage() {
       });
   }, []);
 
+  // Handle window resize to reset column state on desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsColumnCollapsed(false);
+      } else {
+        // Start opened on mobile as well
+        setIsColumnCollapsed(false);
+      }
+    };
+
+    // Set initial state
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // --- Animation Variants (Keep as is) ---
   const pageContainerVariants = {
     /* ... no change ... */ hidden: { opacity: 0 },
@@ -176,6 +195,20 @@ export default function GraphPage() {
     profIdentifier: string | null | undefined,
   ): string => {
     return profIdentifier || "Unknown Professor";
+  };
+
+  // Helper to get professor initials from first two names
+  const getProfessorInitials = (
+    profIdentifier: string | null | undefined,
+  ): string => {
+    const name = getProfessorName(profIdentifier);
+    const words = name.split(' ').filter(word => word.length > 0);
+    if (words.length >= 2) {
+      return `${words[0][0]}${words[1][0]}`.toUpperCase();
+    } else if (words.length === 1) {
+      return words[0].substring(0, 2).toUpperCase();
+    }
+    return "UN";
   };
 
   // Get data for the currently selected day
@@ -292,9 +325,29 @@ export default function GraphPage() {
                 <thead className="sticky top-0 z-30">
                   <tr>
                     {/* UPDATED: Header for Professor column */}
-                    <th className="sticky left-0 top-0 bg-black text-white z-40 px-3 py-3 border-r border-b border-white/15 text-right text-sm font-semibold whitespace-nowrap flex items-center justify-end gap-1.5">
-                      <User className="w-4 h-4 opacity-80" /> {/* Icon */}
-                      Professor
+                    <th
+                      className="sticky left-0 top-0 bg-black text-white z-40 border-r border-b border-white/15 text-right text-sm font-semibold cursor-pointer hover:bg-zinc-900 transition-all duration-300 ease-in-out md:cursor-default md:hover:bg-black"
+                      style={{
+                        width: isColumnCollapsed ? '48px' : 'auto',
+                        minWidth: isColumnCollapsed ? '48px' : 'auto'
+                      }}
+                      onClick={() => {
+                        // Only toggle on mobile (screen width < 768px)
+                        if (window.innerWidth < 768) {
+                          setIsColumnCollapsed(!isColumnCollapsed);
+                        }
+                      }}
+                    >
+                      <div className="h-full w-full px-3 py-3 flex items-center justify-center">
+                        {isColumnCollapsed ? (
+                          <User className="w-4 h-4 opacity-80 flex-shrink-0" />
+                        ) : (
+                          <div className="flex items-center justify-end gap-1.5 w-full">
+                            <User className="w-4 h-4 opacity-80 flex-shrink-0" />
+                            <span>Professor</span>
+                          </div>
+                        )}
+                      </div>
                     </th>
                     {/* Time Interval Headers (Keep as is) */}
                     {timeIntervals.map((time, index) => (
@@ -339,9 +392,30 @@ export default function GraphPage() {
                           >
                             {/* Sticky Cell - Professor Name */}
                             <td
-                              className={`sticky left-0 bg-black group-hover:bg-zinc-900 text-white z-20 px-3 py-1.5 border-r border-b border-white/10 text-right text-sm whitespace-nowrap transition-colors duration-100`}
+                              className="sticky left-0 bg-black group-hover:bg-zinc-900 text-white z-20 border-r border-b border-white/10 text-right text-sm transition-all duration-300 ease-in-out cursor-pointer md:cursor-default"
+                              style={{
+                                width: isColumnCollapsed ? '48px' : 'auto',
+                                minWidth: isColumnCollapsed ? '48px' : 'auto'
+                              }}
+                              onClick={() => {
+                                // Only toggle on mobile (screen width < 768px)
+                                if (window.innerWidth < 768) {
+                                  setIsColumnCollapsed(!isColumnCollapsed);
+                                }
+                              }}
+                              title={getProfessorName(profData.professor)}
                             >
-                              {getProfessorName(profData.professor)}
+                              <div className="h-full w-full px-3 py-1.5 flex items-center justify-center">
+                                {isColumnCollapsed ? (
+                                  <span className="text-xs font-bold text-center">
+                                    {getProfessorInitials(profData.professor)}
+                                  </span>
+                                ) : (
+                                  <span className="text-right w-full whitespace-nowrap">
+                                    {getProfessorName(profData.professor)}
+                                  </span>
+                                )}
+                              </div>
                             </td>
                             {/* Data Cells - Professor Availability */}
                             {profData.availability.map((avail, idx) => (
