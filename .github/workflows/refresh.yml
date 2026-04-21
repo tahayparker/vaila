@@ -1,0 +1,78 @@
+name: Refresh Data
+
+# vaila shares the Supabase Postgres with vacansee. This workflow is
+# kicked off by vacansee's update-timetable pipeline after it finishes
+# scraping + uploading — we then rebuild vaila's public artifacts
+# (scheduleData.json, per-teacher metadata) off the same DB.
+
+on:
+  repository_dispatch:
+    types: [vacansee-data-updated]
+  workflow_dispatch:
+  schedule:
+    # Safety-net daily run at 05:30 UTC (09:30 GST) in case the
+    # repository_dispatch trigger ever drops.
+    - cron: "30 5 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: vaila-refresh
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/requirements.txt
+
+      - name: Set up environment
+        env:
+          SUPABASE_URL_SECRET: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY_SECRET: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          for v in SUPABASE_URL_SECRET SUPABASE_SERVICE_KEY_SECRET; do
+            if [ -z "${!v}" ]; then echo "::error::Secret $v not set."; exit 1; fi
+          done
+          {
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}"
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+          } >> "$GITHUB_ENV"
+
+      - name: Sync teachers table
+        run: python scripts/update_teachers.py
+
+      - name: Regenerate schedule JSON
+        run: python scripts/generate_schedule.py
+
+      - name: Format scheduleData.json
+        run: |
+          npm install --no-save prettier
+          npx prettier public/scheduleData.json --write || true
+
+      - name: Commit and push
+        run: |
+          git config user.name "vaila-refresh-bot"
+          git config user.email "refresh-bot@vaila.local"
+          git add public/scheduleData.json
+          if ! git diff --staged --quiet; then
+            git commit -m "data: refresh scheduleData.json [skip deploy]"
+            git push
+          else
+            echo "No changes to commit."
+          fi

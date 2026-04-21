@@ -1,64 +1,52 @@
 // src/components/SiteHeader.tsx
+//
+// vaila site header. No auth (public app). Mirrors vacansee's
+// navigation aesthetic — fixed glass bar, hover-revealed labels on
+// desktop, motion panel on mobile.
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  CalendarCheck,
-  UserCheck,
+  UserRound,
   Clock,
   Search,
   Grid3x3,
-  Users,
+  BadgeInfo,
   DoorOpen,
 } from "lucide-react";
-import localFont from "next/font/local";
-import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+import { qurovaFont } from "@/lib/fonts";
 
-// Font setup
-const qurovaFont = localFont({
-  src: "../../public/fonts/Qurova-SemiBold.otf",
-  weight: "600",
-  display: "swap",
-});
-
-// Navigation Items
 const navItems = [
-  { name: "Currently Available", href: "/available-now", icon: UserCheck },
+  { name: "Available Now", href: "/available-now", icon: UserRound },
   { name: "Available Soon", href: "/available-soon", icon: Clock },
   { name: "Check Availability", href: "/check", icon: Search },
   { name: "Graph", href: "/graph", icon: Grid3x3 },
-  { name: "Professors", href: "/professors", icon: Users },
+  { name: "Professors", href: "/professors", icon: BadgeInfo },
 ];
-type NavItemType = {
-  name: string;
-  href: string;
-  icon: React.ElementType; // Use React.ElementType for component icons
-};
+type NavItemType = (typeof navItems)[0];
 
-// Vacansee Link details
 const vacanseeLink = {
   name: "vacansee",
-  href: "https://vacansee.vercel.app/",
+  href: "https://vacan.see/",
   icon: DoorOpen,
 };
 
-// *** Define NavLinkProps Interface ***
-interface NavLinkProps extends React.HTMLAttributes<HTMLLIElement> {
-  // Extend basic attributes like className
-  item: NavItemType;
-  isMobile?: boolean;
-  isDesktop?: boolean;
-  currentPath: string;
-  isHovered: boolean;
-  onHoverStart: () => void;
-  onHoverEnd: () => void;
-  onClick?: () => void;
-  // Add other props passed down if needed, but className seems to be the only one
-}
-
-// --- NavLink Component (Updated Props Type) ---
-const NavLink = React.forwardRef<React.ElementRef<"li">, NavLinkProps>( // Use the new interface
+const NavLink = React.forwardRef<
+  React.ElementRef<"li">,
+  Omit<React.ComponentPropsWithoutRef<typeof Link>, "href" | "children"> & {
+    item: NavItemType;
+    isMobile?: boolean;
+    isDesktop?: boolean;
+    currentPath: string;
+    isHovered: boolean;
+    onHoverStart: () => void;
+    onHoverEnd: () => void;
+    onClick?: () => void;
+  }
+>(
   (
     {
       className,
@@ -74,22 +62,20 @@ const NavLink = React.forwardRef<React.ElementRef<"li">, NavLinkProps>( // Use t
     ref,
   ) => {
     const isActuallyActive = item.href === currentPath;
-    const layoutTransition = { type: "spring", stiffness: 500, damping: 35 };
     const labelTransition = { duration: 0.2, ease: "easeInOut" };
 
     if (isMobile) {
       return (
-        <li ref={ref} className={className}>
-          {" "}
-          {/* Pass className to li */}
+        <li ref={ref}>
           <Link
             href={item.href}
-            className={cn(
-              "flex items-center gap-3 w-full p-3 rounded-md transition-colors duration-200 ease-in-out ",
-              isActuallyActive
-                ? "text-purple-300 font-semibold bg-white/5"
-                : "text-white/80 hover:text-white hover:bg-white/10 ",
-            )}
+            className={
+              "flex items-center gap-3 w-full p-3 rounded-md transition-colors duration-200 ease-in-out " +
+              (isActuallyActive
+                ? "text-purple-500 font-semibold bg-white/5"
+                : "text-white/80 hover:text-white hover:bg-white/10 ") +
+              (className ?? "")
+            }
             onClick={onClick}
             aria-current={isActuallyActive ? "page" : undefined}
           >
@@ -111,28 +97,24 @@ const NavLink = React.forwardRef<React.ElementRef<"li">, NavLinkProps>( // Use t
       return (
         <motion.li
           ref={ref}
-          layout
-          transition={layoutTransition}
           onHoverStart={onHoverStart}
           onHoverEnd={onHoverEnd}
-          className={cn("flex", className)}
+          className="flex"
         >
-          {" "}
-          {/* Pass className */}
           <Link
             href={item.href}
             aria-current={isActuallyActive ? "page" : undefined}
-            className={cn(
-              `relative flex items-center justify-center rounded-full transition-colors duration-200 ease-in-out overflow-hidden `,
-              showActiveState
+            className={
+              `relative flex items-center justify-center rounded-full transition-colors duration-200 ease-in-out overflow-hidden ` +
+              (showActiveState
                 ? `bg-white/10 px-3 py-1.5 `
-                : `p-2 hover:hover:bg-white/10 `,
-              textColorClass,
-            )}
+                : `p-2 hover:bg-white/10 `) +
+              textColorClass +
+              (className ?? "")
+            }
           >
             {item.icon && <item.icon className="h-5 w-5 flex-shrink-0" />}
             <AnimatePresence>
-              {" "}
               {showActiveState && (
                 <motion.span
                   key="label"
@@ -147,208 +129,186 @@ const NavLink = React.forwardRef<React.ElementRef<"li">, NavLinkProps>( // Use t
                   className="text-sm font-medium whitespace-nowrap"
                   style={{ lineHeight: "normal" }}
                 >
-                  {" "}
-                  {item.name}{" "}
+                  {item.name}
                 </motion.span>
-              )}{" "}
+              )}
             </AnimatePresence>
           </Link>
         </motion.li>
       );
     }
-    // Fallback if neither mobile nor desktop - should ideally not happen
-    return <li ref={ref} className={className}></li>;
+    return <li ref={ref}></li>;
   },
 );
 NavLink.displayName = "NavLink";
 
-// --- Header Component ---
-export default function SiteHeader() {
-  // --- State Variables ---
+interface SiteHeaderProps {
+  maintenanceMode?: boolean;
+}
+
+export default function SiteHeader({
+  maintenanceMode = false,
+}: SiteHeaderProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
-  const [isSpecialLinkHovered, setIsSpecialLinkHovered] = useState(false);
+  const [isVacanseeLinkHovered, setIsVacanseeLinkHovered] = useState(false);
   const router = useRouter();
   const currentPath = router.pathname;
 
-  // --- Effects ---
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
   useEffect(() => {
     setIsMenuOpen(false);
   }, [currentPath]);
 
-  // --- Constants ---
   const menuToggleTransition = { duration: 0.2 };
   const mobilePanelTransition = { duration: 0.2, ease: "easeOut" };
   const mobileBackdropTransition = { duration: 0.2, ease: "linear" };
-  const specialLabelTransition = { duration: 0.2, ease: "easeInOut" };
+  const vacanseeLabelTransition = { duration: 0.2, ease: "easeInOut" };
 
-  // --- Component Return ---
   return (
     <>
       <header
         className={
           "fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between px-4 sm:px-6 md:px-8 bg-black/5 backdrop-blur-lg border-b border-white/10"
         }
+        role="banner"
+        aria-label="Main navigation"
       >
-        {/* Left side: Brand */}
         <div className="flex-shrink-0 z-10 flex items-center">
           <Link
             href="/"
             className="flex items-center gap-2 text-white font-semibold transition-opacity hover:opacity-80"
+            onClick={(e) => {
+              if (maintenanceMode && router.pathname !== "/maintenance") {
+                e.preventDefault();
+                router.push("/maintenance");
+              }
+            }}
           >
-            <CalendarCheck className="h-6 w-6 text-purple-400" />
-            {/* *** UPDATED Brand Name *** */}
+            <UserRound className="h-6 w-6 text-purple-500" />
             <span className={`sm:inline text-xl mt-1 ${qurovaFont.className}`}>
               vaila
             </span>
           </Link>
         </div>
 
-        {/* Right side: Desktop Nav, Special Link, Mobile Trigger */}
-        <div className="flex items-center gap-1 sm:gap-2">
-          {isMounted ? (
-            <>
-              {/* Desktop Navigation */}
-              <nav className="hidden md:flex">
-                <ul className="flex items-center gap-x-1">
-                  {/* Regular Nav Items */}
-                  {navItems.map((navItem) => (
-                    <NavLink
-                      key={navItem.href}
-                      item={navItem}
-                      isDesktop={true}
-                      currentPath={currentPath}
-                      isHovered={hoveredHref === navItem.href}
-                      onHoverStart={() => setHoveredHref(navItem.href)}
-                      onHoverEnd={() => setHoveredHref(null)}
-                    />
-                  ))}
-                  {/* Special Link for Desktop */}
-                  <motion.li
-                    layout
-                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                    onHoverStart={() => setIsSpecialLinkHovered(true)}
-                    onHoverEnd={() => setIsSpecialLinkHovered(false)}
-                    className="flex ml-2"
-                  >
-                    <a
-                      href={vacanseeLink.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={cn(
-                        `relative flex items-center justify-center rounded-full transition-all duration-200 ease-in-out overflow-hidden`,
-                        isSpecialLinkHovered
-                          ? `bg-white/10 px-3 py-1.5`
-                          : `p-2 hover:bg-white/10`,
-                        isSpecialLinkHovered ? `text-white` : `text-white/70`,
-                      )}
-                    >
-                      {vacanseeLink.icon && (
-                        <vacanseeLink.icon className="h-5 w-5 flex-shrink-0 text-purple-400" />
-                      )}
-                      <AnimatePresence>
-                        {" "}
-                        {isSpecialLinkHovered && (
-                          <motion.span
-                            key="special-label"
-                            initial={{ width: 0, opacity: 0, marginLeft: 0 }}
-                            animate={{
-                              width: "auto",
-                              opacity: 1,
-                              marginLeft: "0.375rem",
-                            }}
-                            exit={{ width: 0, opacity: 0, marginLeft: 0 }}
-                            transition={specialLabelTransition}
-                            className="text-sm font-medium whitespace-nowrap"
-                            style={{ lineHeight: "normal" }}
-                          >
-                            {" "}
-                            {vacanseeLink.name}{" "}
-                          </motion.span>
-                        )}{" "}
-                      </AnimatePresence>
-                    </a>
-                  </motion.li>
-                </ul>
-              </nav>
+        {!maintenanceMode && isMounted && (
+          <div className="flex items-center gap-1 sm:gap-2">
+            <nav
+              className="hidden md:flex"
+              role="navigation"
+              aria-label="Main navigation"
+            >
+              <ul className="flex items-center gap-x-1" role="menubar">
+                {navItems.map((navItem) => (
+                  <NavLink
+                    key={navItem.href}
+                    item={navItem}
+                    isDesktop={true}
+                    currentPath={currentPath}
+                    isHovered={hoveredHref === navItem.href}
+                    onHoverStart={() => setHoveredHref(navItem.href)}
+                    onHoverEnd={() => setHoveredHref(null)}
+                  />
+                ))}
+              </ul>
+            </nav>
 
-              {/* Mobile Menu Trigger */}
-              <div className="flex md:hidden ml-1">
-                <motion.button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="relative z-[65] flex flex-col justify-center items-center gap-[7px] p-2 rounded-md transition-colors text-white hover:bg-white/10 active:bg-white/20"
-                  aria-label="Toggle menu"
-                  aria-expanded={isMenuOpen}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <motion.span
-                    className="w-5 h-px bg-white block rounded-full"
-                    animate={
-                      isMenuOpen ? { rotate: 45, y: 4 } : { rotate: 0, y: 0 }
-                    }
-                    transition={menuToggleTransition}
-                  />
-                  <motion.span
-                    className="w-5 h-px bg-white block rounded-full"
-                    animate={
-                      isMenuOpen ? { rotate: -45, y: -4 } : { rotate: 0, y: 0 }
-                    }
-                    transition={menuToggleTransition}
-                  />
-                </motion.button>
-              </div>
-            </>
-          ) : (
-            /* Placeholder */
-            <div className="flex items-center gap-1 sm:gap-2">
-              {" "}
-              <div className="hidden md:block w-56 h-8 bg-white/5 rounded-full animate-pulse"></div>{" "}
-              <div className="w-8 h-8 bg-white/5 rounded-md animate-pulse md:hidden"></div>{" "}
+            {/* vacansee cross-link (desktop) */}
+            <div className="hidden md:flex items-center ml-2 h-10">
+              <motion.a
+                href={vacanseeLink.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onHoverStart={() => setIsVacanseeLinkHovered(true)}
+                onHoverEnd={() => setIsVacanseeLinkHovered(false)}
+                className={
+                  `relative flex items-center justify-center rounded-full transition-colors duration-200 ease-in-out overflow-hidden ` +
+                  (isVacanseeLinkHovered
+                    ? `bg-white/10 px-3 py-1.5 text-white`
+                    : `p-2 hover:bg-white/10 text-white/80`)
+                }
+                aria-label="Open vacansee"
+              >
+                <vacanseeLink.icon className="h-5 w-5 flex-shrink-0" />
+                <AnimatePresence>
+                  {isVacanseeLinkHovered && (
+                    <motion.span
+                      key="vacansee-label"
+                      initial={{ width: 0, opacity: 0, marginLeft: 0 }}
+                      animate={{
+                        width: "auto",
+                        opacity: 1,
+                        marginLeft: "0.375rem",
+                      }}
+                      exit={{ width: 0, opacity: 0, marginLeft: 0 }}
+                      transition={vacanseeLabelTransition}
+                      className="text-sm font-medium whitespace-nowrap"
+                      style={{ lineHeight: "normal" }}
+                    >
+                      {vacanseeLink.name}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.a>
             </div>
-          )}
-        </div>
+
+            {/* Mobile burger */}
+            <button
+              type="button"
+              className="md:hidden inline-flex items-center justify-center rounded-full w-10 h-10 text-white/80 hover:text-white hover:bg-white/10"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              onClick={() => setIsMenuOpen((v) => !v)}
+            >
+              <motion.div
+                animate={{ rotate: isMenuOpen ? 90 : 0 }}
+                transition={menuToggleTransition}
+                className="flex flex-col gap-1"
+              >
+                <span className="block w-5 h-0.5 bg-current" />
+                <span className="block w-5 h-0.5 bg-current" />
+                <span className="block w-5 h-0.5 bg-current" />
+              </motion.div>
+            </button>
+          </div>
+        )}
       </header>
 
-      {/* --- Mobile Menu Backdrop & Panel --- */}
+      {/* Mobile panel */}
       <AnimatePresence>
-        {" "}
-        {isMounted && isMenuOpen && (
-          <motion.div
-            key="mobile-backdrop"
-            className="fixed inset-0 top-16 bg-black/60 backdrop-blur-sm z-40 md:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={mobileBackdropTransition}
-            onClick={() => setIsMenuOpen(false)}
-          />
-        )}{" "}
-      </AnimatePresence>
-      <AnimatePresence>
-        {isMounted && isMenuOpen && (
-          <motion.div
-            key="mobile-menu-panel"
-            className={
-              "fixed inset-x-4 top-20 z-50 md:hidden bg-gradient-to-br from-black/80 to-black/90 backdrop-blur-xl border border-white/15 shadow-xl rounded-lg overflow-hidden"
-            }
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={mobilePanelTransition}
-          >
-            <div className="max-h-[calc(100vh-6rem)] overflow-y-auto p-4 flex flex-col">
-              <nav>
+        {!maintenanceMode && isMenuOpen && (
+          <>
+            <motion.div
+              key="mobile-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={mobileBackdropTransition}
+              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
+              onClick={() => setIsMenuOpen(false)}
+              aria-hidden="true"
+            />
+            <motion.aside
+              key="mobile-panel"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={mobilePanelTransition}
+              className="fixed top-16 right-0 bottom-0 z-40 w-72 max-w-[85vw] bg-black/80 backdrop-blur-xl border-l border-white/10 md:hidden"
+              role="dialog"
+              aria-modal="true"
+            >
+              <nav className="flex flex-col p-4" aria-label="Mobile navigation">
                 <ul className="flex flex-col gap-1">
-                  {/* Regular Nav Items */}
-                  {navItems.map((navItem) => (
+                  {navItems.map((item) => (
                     <NavLink
-                      key={navItem.href}
-                      item={navItem}
-                      isMobile={true}
+                      key={item.href}
+                      item={item}
+                      isMobile
                       currentPath={currentPath}
                       isHovered={false}
                       onHoverStart={() => {}}
@@ -356,32 +316,22 @@ export default function SiteHeader() {
                       onClick={() => setIsMenuOpen(false)}
                     />
                   ))}
-                  {/* Separator */}
-                  <hr className="border-white/10 my-2" />
-                  {/* Special Link for Mobile */}
-                  <li>
-                    <a
-                      href={vacanseeLink.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={cn(
-                        "flex items-center gap-3 w-full p-3 rounded-md transition-colors duration-200 ease-in-out",
-                        "text-white/80 hover:text-white hover:bg-white/10",
-                      )}
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {vacanseeLink.icon && (
-                        <vacanseeLink.icon className="h-5 w-5 flex-shrink-0 text-purple-400" />
-                      )}
-                      <span className="flex-grow text-base">
-                        {vacanseeLink.name}
-                      </span>
-                    </a>
-                  </li>
                 </ul>
+                <Separator className="my-3 bg-white/10" />
+                <a
+                  href={vacanseeLink.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 w-full p-3 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  <vacanseeLink.icon className="h-5 w-5 flex-shrink-0" />
+                  <span className="flex-grow text-base">
+                    {vacanseeLink.name}
+                  </span>
+                </a>
               </nav>
-            </div>
-          </motion.div>
+            </motion.aside>
+          </>
         )}
       </AnimatePresence>
     </>

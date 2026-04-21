@@ -8,14 +8,12 @@ export default function SiteFooter() {
       className={
         "w-full border-t border-white/10 " +
         "px-4 sm:px-6 md:px-8 py-4 " +
-        "bg-black/5 backdrop-blur-sm " +
-        "flex-shrink-0" // Added flex-shrink-0 to prevent footer from growing unnecessarily
+        "bg-black/5 backdrop-blur-sm "
       }
     >
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-y-2">
-        {/* Left Links (Keep for now) */}
+        {/* Left Links */}
         <nav className="flex items-center gap-x-4 sm:gap-x-6">
-          {/* TODO: Verify if these pages (Docs, Legal, Privacy) are still needed/relevant for "vaila" */}
           <Link
             href="/docs"
             className="text-sm text-white/70 hover:text-white transition-colors"
@@ -36,11 +34,8 @@ export default function SiteFooter() {
           </Link>
         </nav>
 
-        {/* UPDATED Right Copyright */}
-        <p className="text-sm text-white/60">
-          © {new Date().getFullYear()} vaila{" "}
-          {/* Replaced vacansee with vaila */}
-        </p>
+        {/* Right footer text */}
+        <p className="text-sm text-white/60">Made with 🖤 by TP</p>
       </div>
     </footer>
   );

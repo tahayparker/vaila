@@ -1,11 +1,12 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  // Connection URLs live in prisma.config.ts (migrations) and
+  // src/lib/prisma.ts (runtime via driver adapter) as of Prisma 7.
 }
 
 model Rooms {
@@ -13,6 +14,10 @@ model Rooms {
   Name      String
   ShortCode String
   Capacity  Int?
+
+  // Indexes for faster queries
+  @@index([ShortCode])
+  @@index([Name])
 }
 
 model Teacher {
@@ -31,4 +36,12 @@ model Timings {
   EndTime   String
   Room      String
   Teacher   String
+
+  // Composite indexes for common query patterns
+  // Used for availability checks by day and time
+  @@index([Day, StartTime, EndTime])
+  // Used for filtering by specific rooms
+  @@index([Room])
+  // Used for filtering by day
+  @@index([Day])
 }

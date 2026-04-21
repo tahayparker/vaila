@@ -1,35 +1,56 @@
 // src/middleware.ts
+//
+// vaila has no auth — this middleware only handles maintenance mode
+// and matches vacansee's logging/structure so the two codebases stay
+// in sync.
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-// Removed import for PUBLIC_PATHS as it's no longer needed for auth checks here
 
-// Removed requiresAuthentication function as it's no longer used
+const ALLOWED_DURING_MAINTENANCE: string[] = [
+  "/maintenance",
+  "/docs",
+  "/legal",
+  "/privacy",
+];
 
 export async function middleware(req: NextRequest) {
-  // Create response object - necessary for potential cookie operations by Supabase client,
-  // even if we aren't actively using auth checks anymore.
-  const res = NextResponse.next();
-
   const { pathname } = req.nextUrl;
-  console.log(`[Middleware] Request received for: ${pathname}`);
 
-  // --- Authentication Logic REMOVED ---
-  // No checks for session, no redirects based on auth status.
-  // All paths are allowed through by default.
+  console.log(`[Middleware] Method: ${req.method}, Path: "${pathname}"`);
 
-  // Allow OPTIONS requests early for CORS preflight
-  if (req.method === "OPTIONS") {
-    console.log(`[Middleware] Allowing OPTIONS request for CORS preflight.`);
-    return res;
+  const isMaintenanceModeActive =
+    process.env.NEXT_PUBLIC_MAINTENANCE_MODE === "true";
+
+  if (isMaintenanceModeActive) {
+    if (
+      pathname.startsWith("/_next/") ||
+      pathname.startsWith("/api/_next/") ||
+      pathname.endsWith(".ico") ||
+      pathname.endsWith(".png") ||
+      pathname.endsWith(".jpg") ||
+      pathname.endsWith(".jpeg") ||
+      pathname.endsWith(".svg") ||
+      pathname.endsWith(".css") ||
+      pathname.endsWith(".js") ||
+      pathname === "/manifest.json" ||
+      pathname.startsWith("/fonts/")
+    ) {
+      return NextResponse.next();
+    }
+
+    if (!ALLOWED_DURING_MAINTENANCE.includes(pathname)) {
+      console.log(
+        `[Middleware] Maintenance Mode ON. Path "${pathname}" is NOT allowed. Redirecting to /maintenance.`,
+      );
+      const maintenanceUrl = new URL("/maintenance", req.url);
+      return NextResponse.redirect(maintenanceUrl, { status: 307 });
+    }
   }
 
-  console.log(`[Middleware] Passing request through for path "${pathname}"`);
-  return res;
+  return NextResponse.next();
 }
 
-// --- Simplified Matcher ---
-// Match all paths except for Next.js internal static files and image optimization.
-// This ensures the middleware runs for all actual page/API routes.
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
