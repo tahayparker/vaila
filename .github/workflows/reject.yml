@@ -1,0 +1,76 @@
+name: Reject Professor Details Update
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  reject:
+    runs-on: ubuntu-latest
+    # Only run if comment starts with "reject" (but not "approve"), issue has "contact" label, and commenter is tahayparker
+    if: |
+      startsWith(github.event.comment.body, 'reject') &&
+      github.event.comment.body != 'approve' &&
+      contains(github.event.issue.labels.*.name, 'contact') &&
+      github.event.issue.state == 'open' &&
+      github.event.comment.user.login == 'tahayparker'
+
+    steps:
+      - name: Debug comment information
+        run: |
+          echo "Comment body: '${{ github.event.comment.body }}'"
+          echo "Comment user: ${{ github.event.comment.user.login }}"
+          echo "Issue state: ${{ github.event.issue.state }}"
+          echo "Issue labels: ${{ toJson(github.event.issue.labels.*.name) }}"
+      - name: Extract rejection reason
+        id: extract-reason
+        run: |
+          COMMENT="${{ github.event.comment.body }}"
+          # Extract reason after "reject:" or "reject "
+          if [[ "$COMMENT" == *":"* ]]; then
+            REASON=$(echo "$COMMENT" | sed 's/reject: *//' | xargs)
+          elif [[ "$COMMENT" != "reject" ]]; then
+            REASON=$(echo "$COMMENT" | sed 's/reject *//' | xargs)
+          else
+            REASON=""
+          fi
+          echo "reason=$REASON" >> $GITHUB_OUTPUT
+          echo "Extracted reason: '$REASON'"
+
+      - name: Add rejection comment and close issue
+        run: |
+          REASON="${{ steps.extract-reason.outputs.reason }}"
+
+          if [ -z "$REASON" ] || [ "$REASON" = "" ]; then
+            COMMENT_BODY="**Rejected by @${{ github.event.comment.user.login }}**
+
+          This professor details update request has been rejected.
+
+          This issue is now closed."
+          else
+            COMMENT_BODY="**Rejected by @${{ github.event.comment.user.login }}**
+
+          This professor details update request has been rejected.
+
+          **Reason:** $REASON
+
+          This issue is now closed."
+          fi
+
+          # Create rejection comment using GitHub API
+          curl -s -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"body\": $(echo "$COMMENT_BODY" | jq -Rs .)}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments"
+
+          # Close issue using GitHub API
+          curl -s -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"state": "closed"}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}"

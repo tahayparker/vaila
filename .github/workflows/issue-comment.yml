@@ -1,0 +1,53 @@
+name: Comment on Professor Issue
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    # Only run if the issue has the "contact" label (from update professor details template)
+    if: contains(github.event.issue.labels.*.name, 'contact')
+
+    steps:
+      - name: Check if instruction comment already exists
+        id: check-comment
+        run: |
+          # Check if a comment with the review instructions already exists using GitHub API
+          COMMENTS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments")
+
+          # Check if any comment contains the review instructions
+          EXISTING_COMMENT=$(echo "$COMMENTS" | jq -r '.[] | select(.body | contains("Review Professor Details Update")) | .id')
+
+          if [ -n "$EXISTING_COMMENT" ] && [ "$EXISTING_COMMENT" != "null" ]; then
+            echo "comment_exists=true" >> $GITHUB_OUTPUT
+            echo "Instruction comment already exists (ID: $EXISTING_COMMENT), skipping"
+          else
+            echo "comment_exists=false" >> $GITHUB_OUTPUT
+            echo "No instruction comment found, will create one"
+          fi
+
+      - name: Add Approve/Reject instructions
+        if: steps.check-comment.outputs.comment_exists == 'false'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            ## Review Professor Details Update
+
+            Please review the professor details update request above and choose an action by commenting on this issue:
+
+            | Action | Command | Description |
+            |--------|---------|-------------|
+            | ✅ **Approve** | Comment: `approve` | Update professor details in database and close issue |
+            | ❌ **Reject** | Comment: `reject` or `reject: [reason]` | Reject this update request and close issue |
+
+            **Instructions:**
+            - To **approve**: Simply comment `approve` on this issue
+            - To **reject**: Comment `reject` or `reject: reason for rejection` on this issue

@@ -120,13 +120,33 @@
   }
   /* --- End Targeted font overrides --- */
 
-  /* --- Global Scrollbar Hiding --- */
-  body::-webkit-scrollbar,
-  .hide-scrollbar::-webkit-scrollbar {
+  /* --- Global Scrollbar Hiding for All Elements --- */
+  /* Hide scrollbars for all elements while keeping them scrollable */
+  *::-webkit-scrollbar {
     display: none;
   }
+
+  * {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* Specific targeting for body and common scroll containers */
+  body::-webkit-scrollbar,
+  .hide-scrollbar::-webkit-scrollbar,
+  div::-webkit-scrollbar,
+  main::-webkit-scrollbar,
+  section::-webkit-scrollbar,
+  article::-webkit-scrollbar {
+    display: none;
+  }
+
   body,
-  .hide-scrollbar {
+  .hide-scrollbar,
+  div,
+  main,
+  section,
+  article {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
