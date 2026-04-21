@@ -273,7 +273,26 @@ export default function CustomGraphPage() {
         if (!Array.isArray(data) || data.length !== daysOfWeek.length) {
           throw new Error("Invalid schedule data format received from API");
         }
-        setScheduleData(data);
+        // Normalize vaila's professor-shaped payload into the room
+        // shape this page was originally written against. Field names
+        // `professors`/`professor` map onto `rooms`/`room` — the graph
+        // treats each row as a named entity with a 1/0 availability
+        // vector, so the source domain does not matter.
+        const normalized: FrontendScheduleDay[] = data.map((day: any) => ({
+          day: day.day,
+          rooms: Array.isArray(day.rooms)
+            ? day.rooms.map((r: any) => ({
+                room: r.room ?? r.professor ?? "",
+                availability: r.availability ?? [],
+              }))
+            : Array.isArray(day.professors)
+              ? day.professors.map((p: any) => ({
+                  room: p.professor ?? p.room ?? "",
+                  availability: p.availability ?? [],
+                }))
+              : [],
+        }));
+        setScheduleData(normalized);
       })
       .catch((error) => {
         console.error("Error fetching schedule:", error);
@@ -288,7 +307,7 @@ export default function CustomGraphPage() {
   const allRooms = useMemo(() => {
     const roomSet = new Set<string>();
     scheduleData.forEach((day) => {
-      day.rooms.forEach((room) => {
+      (day?.rooms ?? []).forEach((room) => {
         if (room?.room) roomSet.add(room.room);
       });
     });
