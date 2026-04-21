@@ -1,5 +1,5 @@
 /**
- * Shared type definitions used across the vacansee application
+ * Shared type definitions used across the vaila application
  *
  * These types represent domain models and common structures
  * that are used by multiple components and services.

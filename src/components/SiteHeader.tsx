@@ -15,6 +15,7 @@ import {
   Grid3x3,
   BadgeInfo,
   DoorOpen,
+  Settings2,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { qurovaFont } from "@/lib/fonts";
@@ -24,6 +25,7 @@ const navItems = [
   { name: "Available Soon", href: "/available-soon", icon: Clock },
   { name: "Check Availability", href: "/check", icon: Search },
   { name: "Graph", href: "/graph", icon: Grid3x3 },
+  { name: "Custom Graph", href: "/custom-graph", icon: Settings2 },
   { name: "Professors", href: "/professors", icon: BadgeInfo },
 ];
 type NavItemType = (typeof navItems)[0];
@@ -230,11 +232,11 @@ export default function SiteHeader({
                   `relative flex items-center justify-center rounded-full transition-colors duration-200 ease-in-out overflow-hidden ` +
                   (isVacanseeLinkHovered
                     ? `bg-white/10 px-3 py-1.5 text-white`
-                    : `p-2 hover:bg-white/10 text-white/80`)
+                    : `p-2 hover:bg-white/10 text-white/70`)
                 }
                 aria-label="Open vacansee"
               >
-                <vacanseeLink.icon className="h-5 w-5 flex-shrink-0" />
+                <vacanseeLink.icon className="h-5 w-5 flex-shrink-0 text-purple-500" />
                 <AnimatePresence>
                   {isVacanseeLinkHovered && (
                     <motion.span
@@ -324,7 +326,7 @@ export default function SiteHeader({
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 w-full p-3 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-colors"
                 >
-                  <vacanseeLink.icon className="h-5 w-5 flex-shrink-0" />
+                  <vacanseeLink.icon className="h-5 w-5 flex-shrink-0 text-purple-500" />
                   <span className="flex-grow text-base">
                     {vacanseeLink.name}
                   </span>

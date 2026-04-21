@@ -18,7 +18,7 @@ export default function AboutPage() {
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-6 pt-20 md:pt-24 flex-grow flex flex-col items-center text-white">
       <Head>
-        <title>About - vacansee</title>
+        <title>About - vaila</title>
       </Head>
 
       <motion.div
@@ -31,7 +31,7 @@ export default function AboutPage() {
           variants={sectionVariant}
           className="text-4xl md:text-5xl font-bold mb-6 text-center bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent"
         >
-          About vacansee
+          About vaila
         </motion.h1>
 
         <motion.section
@@ -40,10 +40,10 @@ export default function AboutPage() {
         >
           <Info className="mx-auto h-10 w-10 text-purple-500 mb-3" />
           <h2 className="text-2xl font-semibold text-white/90">
-            What is vacansee?
+            What is vaila?
           </h2>
           <p>
-            vacansee is a modern web application designed to provide real-time
+            vaila is a modern web application designed to provide real-time
             information about room availability and scheduling within the
             university campus.
           </p>
@@ -63,7 +63,7 @@ export default function AboutPage() {
             The primary goal is to make finding an available room quick and
             effortless. Whether you need a quiet place to study, a room for a
             group meeting, or just want to see the campus schedule at a glance,
-            vacansee provides the necessary tools.
+            vaila provides the necessary tools.
           </p>
         </motion.section>
 
@@ -76,7 +76,7 @@ export default function AboutPage() {
           <p>
             Built using modern web technologies including Next.js, React,
             TypeScript, Tailwind CSS, and Supabase for backend services,
-            vacansee prioritizes performance and user experience.
+            vaila prioritizes performance and user experience.
           </p>
         </motion.section>
 

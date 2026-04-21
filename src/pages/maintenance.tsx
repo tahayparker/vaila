@@ -10,7 +10,7 @@ const MaintenancePage: NextPage<MaintenancePageProps> = () => {
   return (
     <>
       <Head>
-        <title>Maintenance Mode - vacansee</title>
+        <title>Maintenance Mode - vaila</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div className="relative flex flex-col flex-grow items-center justify-center text-center z-10 w-full px-4 sm:px-8 text-white">
@@ -20,7 +20,7 @@ const MaintenancePage: NextPage<MaintenancePageProps> = () => {
             Maintenance Mode
           </h1>
           <p className="text-lg text-white/80 mb-2 font-bold">
-            vacansee is currently undergoing scheduled maintenance.
+            vaila is currently undergoing scheduled maintenance.
           </p>
           <p className="text-md text-white/70">
             We&apos;re working hard to improve your experience and will be back

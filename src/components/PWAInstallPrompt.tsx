@@ -156,7 +156,7 @@ export default function PWAInstallPrompt() {
                 <div className="flex items-center gap-2">
                   <Smartphone className="h-5 w-5 text-purple-500" />
                   <h3 className="text-white font-semibold text-sm">
-                    Install vacansee
+                    Install vaila
                   </h3>
                 </div>
                 <Button
@@ -170,7 +170,7 @@ export default function PWAInstallPrompt() {
               </div>
 
               <div className="text-gray-300 text-xs space-y-2">
-                <p>Install vacansee on your iPhone for quick access:</p>
+                <p>Install vaila on your iPhone for quick access:</p>
                 <ol className="list-decimal list-inside space-y-1 text-xs">
                   <li>
                     Tap the Share button{" "}
@@ -202,7 +202,7 @@ export default function PWAInstallPrompt() {
               <div className="flex items-center gap-2">
                 <Download className="h-5 w-5 text-purple-500" />
                 <h3 className="text-white font-semibold text-sm">
-                  Install vacansee
+                  Install vaila
                 </h3>
               </div>
               <Button
@@ -216,7 +216,7 @@ export default function PWAInstallPrompt() {
             </div>
 
             <p className="text-gray-300 text-xs mb-3">
-              Install vacansee on your device for quick access to room
+              Install vaila on your device for quick access to room
               availability.
             </p>
 

@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 
-const ONBOARDING_SESSION_FLAG = "vacansee_onboarding_done";
+const ONBOARDING_SESSION_FLAG = "vaila_onboarding_done";
 
 // ============================================================================
 // TYPES
@@ -49,7 +49,7 @@ interface OnboardingProps {
 
 const ONBOARDING_STEPS: OnboardingStep[] = [
   {
-    title: "Welcome to vacansee ✨",
+    title: "Welcome to vaila ✨",
     description:
       "The fastest way to find an available room on campus. Here’s a super-quick tour (under 30s).",
     icon: <DoorOpen className="w-12 h-12 text-purple-500" />,
@@ -91,7 +91,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     title: "Install the app",
     description:
-      "Add vacansee to your home screen for one‑tap access. We’ll prompt you when it’s available.",
+      "Add vaila to your home screen for one‑tap access. We’ll prompt you when it’s available.",
     icon: <Smartphone className="w-12 h-12 text-teal-400" />,
     tip: "Look for the install prompt.",
   },
@@ -104,7 +104,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   },
   {
     title: "You're all set 🎉",
-    description: "That’s everything you need. Welcome to vacansee!",
+    description: "That’s everything you need. Welcome to vaila!",
     icon: <DoorOpen className="w-12 h-12 text-purple-500" />,
     tip: "Enjoy!",
   },
