@@ -2,12 +2,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Save,
-  User,
   Mail,
   Phone,
   AlertCircle,
@@ -98,7 +97,7 @@ export default function AddProfessorDetailsPage() {
   const [showValidationErrors, setShowValidationErrors] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileError, setTurnstileError] = useState<string | null>(null);
-  const [testMode, setTestMode] = useState(false);
+
   const [turnstileKey, setTurnstileKey] = useState(0); // Key to force Turnstile re-render // --- Effects ---
   useEffect(() => {
     const fetchTeachers = async () => {
@@ -261,13 +260,6 @@ export default function AddProfessorDetailsPage() {
 
   // Check if Turnstile is completed
   const turnstileCompleted = !!turnstileToken;
-
-  // Check if form has validation errors
-  const hasValidationErrors = useMemo(() => {
-    return Object.values(validationErrors).some(
-      (error) => error !== null && error !== undefined,
-    );
-  }, [validationErrors]);
 
   // --- Handlers ---
   const handleTeacherSelect = (teacher: TeacherData) => {
@@ -552,7 +544,7 @@ ${localDateTime}`; // Create the GitHub issue using GitHub API
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.4, ease: "easeOut" },
+      transition: { duration: 0.4, ease: "easeOut" as const },
     },
   };
 
@@ -561,7 +553,7 @@ ${localDateTime}`; // Create the GitHub issue using GitHub API
     visible: {
       opacity: 1,
       y: 0,
-      transition: { delay: 0.2, duration: 0.4, ease: "easeOut" },
+      transition: { delay: 0.2, duration: 0.4, ease: "easeOut" as const },
     },
   };
 
