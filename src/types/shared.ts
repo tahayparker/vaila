@@ -101,11 +101,6 @@ export type LoadingState = "idle" | "loading" | "success" | "error";
 export type SizeVariant = "small" | "medium" | "large";
 
 /**
- * Time format preference
- */
-export type TimeFormat = "12h" | "24h";
-
-/**
  * Grouping mode for graphs
  */
 export type GroupingMode = "rooms" | "date";
@@ -123,10 +118,6 @@ export type SelectionMode = "range" | "individual";
  * User preferences stored in localStorage or database
  */
 export interface UserPreferences {
-  /** Preferred time format */
-  timeFormat: TimeFormat;
-  /** Whether onboarding has been completed */
-  onboardingCompleted: boolean;
   /** Recently searched rooms */
   recentSearches: string[];
 }
