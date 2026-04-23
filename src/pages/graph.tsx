@@ -1,12 +1,7 @@
 // src/pages/graph.tsx
 import { useState, useEffect } from "react";
 import Head from "next/head";
-import {
-  motion,
-  AnimatePresence,
-  useMotionValue,
-  useTransform,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Select,
   SelectContent,
@@ -162,32 +157,42 @@ export default function GraphPage() {
   // --- Animation Variants (Keep as is) ---
   const pageContainerVariants = {
     /* ... no change ... */ hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.4, ease: "easeOut" } },
+    visible: {
+      opacity: 1,
+      transition: { duration: 0.4, ease: "easeOut" as const },
+    },
   };
   const headerSectionVariants = {
     /* ... no change ... */ hidden: { opacity: 0, y: -20 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { delay: 0.1, duration: 0.4, ease: "easeOut" },
+      transition: { delay: 0.1, duration: 0.4, ease: "easeOut" as const },
     },
   };
   const tableContainerVariants = {
     /* ... no change ... */ hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { delay: 0.1, duration: 0.3, ease: "easeOut" },
+      transition: { delay: 0.1, duration: 0.3, ease: "easeOut" as const },
     },
-    exit: { opacity: 0, transition: { duration: 0.2, ease: "easeIn" } },
+    exit: {
+      opacity: 0,
+      transition: { duration: 0.2, ease: "easeIn" as const },
+    },
   };
   const tableRowVariants = {
     /* ... no change ... */ hidden: { opacity: 0, x: -15 },
     visible: (i: number) => ({
       opacity: 1,
       x: 0,
-      transition: { delay: i * 0.025, duration: 0.3, ease: "easeOut" },
+      transition: { delay: i * 0.025, duration: 0.3, ease: "easeOut" as const },
     }),
-    exit: { opacity: 0, x: 15, transition: { duration: 0.15, ease: "easeIn" } },
+    exit: {
+      opacity: 0,
+      x: 15,
+      transition: { duration: 0.15, ease: "easeIn" as const },
+    },
   };
 
   // Column animation variants
@@ -196,60 +201,18 @@ export default function GraphPage() {
       width: "auto",
       minWidth: "200px",
       transition: {
-        type: "tween",
+        type: "tween" as const,
         duration: 0.15,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       },
     },
     collapsed: {
       width: "48px",
       minWidth: "48px",
       transition: {
-        type: "tween",
+        type: "tween" as const,
         duration: 0.15,
-        ease: "easeInOut",
-      },
-    },
-  };
-
-  const textVariants = {
-    expanded: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        type: "tween",
-        duration: 0.1,
-        ease: "easeOut",
-      },
-    },
-    collapsed: {
-      opacity: 0,
-      scale: 0.8,
-      transition: {
-        type: "tween",
-        duration: 0.1,
-        ease: "easeIn",
-      },
-    },
-  };
-
-  const initialsVariants = {
-    expanded: {
-      opacity: 0,
-      scale: 0.8,
-      transition: {
-        type: "tween",
-        duration: 0.1,
-        ease: "easeIn",
-      },
-    },
-    collapsed: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        type: "tween",
-        duration: 0.1,
-        ease: "easeOut",
+        ease: "easeInOut" as const,
       },
     },
   };
