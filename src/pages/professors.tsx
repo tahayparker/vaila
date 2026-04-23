@@ -19,10 +19,9 @@ import {
   MoreHorizontal,
   X,
   Plus,
-} from "lucide-react"; // Loader2 import needed again if we use it
+} from "lucide-react";
 import Fuse from "fuse.js";
 import { cn } from "@/lib/utils";
-// TooltipProvider import removed
 
 // --- Data Structures ---
 interface TeacherData {
@@ -207,7 +206,7 @@ export default function TeacherDetailsPage() {
     visible: {
       opacity: 1,
       x: 0,
-      transition: { duration: 0.3, ease: "easeOut" },
+      transition: { duration: 0.3, ease: "easeOut" as const },
     },
     exit: { opacity: 0, x: 20, transition: { duration: 0.2 } },
   };
@@ -216,7 +215,7 @@ export default function TeacherDetailsPage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.3, ease: "easeOut" },
+      transition: { duration: 0.3, ease: "easeOut" as const },
     },
     exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
   };
@@ -225,7 +224,7 @@ export default function TeacherDetailsPage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { delay: 0.1, duration: 0.4, ease: "easeOut" },
+      transition: { delay: 0.1, duration: 0.4, ease: "easeOut" as const },
     },
   };
   const searchBarVariant = {
@@ -233,7 +232,7 @@ export default function TeacherDetailsPage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { delay: 0.2, duration: 0.4, ease: "easeOut" },
+      transition: { delay: 0.2, duration: 0.4, ease: "easeOut" as const },
     },
   };
   const legendVariant = {
@@ -241,14 +240,14 @@ export default function TeacherDetailsPage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { delay: 0.3, duration: 0.4, ease: "easeOut" },
+      transition: { delay: 0.3, duration: 0.4, ease: "easeOut" as const },
     },
   };
   const tableContainerVariant = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { delay: 0.4, duration: 0.5, ease: "easeOut" },
+      transition: { delay: 0.4, duration: 0.5, ease: "easeOut" as const },
     },
   };
   const mobileActionsVariant = {
@@ -257,13 +256,13 @@ export default function TeacherDetailsPage() {
       opacity: 1,
       x: 0,
       width: "auto",
-      transition: { duration: 0.3, ease: "easeOut" },
+      transition: { duration: 0.3, ease: "easeOut" as const },
     },
     exit: {
       opacity: 0,
       x: 20,
       width: 0,
-      transition: { duration: 0.2, ease: "easeIn" },
+      transition: { duration: 0.2, ease: "easeIn" as const },
     },
   };
 
