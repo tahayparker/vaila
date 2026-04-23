@@ -14,7 +14,6 @@ export default async function handler(
       body,
       labels,
       professorName,
-      encodedIP,
       encodedLocation,
       encodedCoordinates,
       localDateTime,
