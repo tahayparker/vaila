@@ -166,8 +166,6 @@ export const SPINNER_SIZE = {
 export const STORAGE_KEYS = {
   TIME_FORMAT: "vaila_time_format",
   RECENT_SEARCHES: "vaila_recent_searches",
-  ONBOARDING_COMPLETED: "vaila_onboarding_completed",
-  CUSTOM_GRAPH_FILTERS: "vaila_custom_graph_filters",
 } as const;
 
 /**
@@ -184,9 +182,7 @@ export const MAX_RECENT_SEARCHES = 10;
  * Useful for gradual rollouts or A/B testing
  */
 export const FEATURES = {
-  ONBOARDING: true,
   ANALYTICS: true,
-  PWA: true,
   CSV_EXPORT: true,
   SHAREABLE_URLS: true,
 } as const;
