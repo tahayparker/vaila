@@ -154,9 +154,9 @@ export default function AvailableSoonPage() {
       const dateObj = parseISO(checkedAtFutureTime);
       return dateObj.toLocaleTimeString("en-US", {
         timeZone: TARGET_TIMEZONE,
-        hour: "numeric",
+        hour: "2-digit",
         minute: "2-digit",
-        hour12: true,
+        hour12: false,
       });
     } catch {
       return "Invalid Time";
@@ -182,7 +182,7 @@ export default function AvailableSoonPage() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { delayChildren: 0.1, staggerChildren: 0.08 },
+      transition: { delayChildren: 0.01, staggerChildren: 0.01 },
     },
   };
   const itemVariants = {
@@ -190,7 +190,7 @@ export default function AvailableSoonPage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 100, damping: 12 },
+      transition: { type: "spring" as const, stiffness: 100, damping: 12 },
     },
   };
 
