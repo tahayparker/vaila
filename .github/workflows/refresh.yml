@@ -67,8 +67,8 @@ jobs:
 
       - name: Commit and push
         run: |
-          git config user.name "vaila-refresh-bot"
-          git config user.email "refresh-bot@vaila.local"
+          git config user.name "Taha Parker"
+          git config user.email "98612931+tahayparker@users.noreply.github.com"
           git add public/scheduleData.json
           if ! git diff --staged --quiet; then
             git commit -m "data: refresh scheduleData.json [skip deploy]"
