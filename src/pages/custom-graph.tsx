@@ -47,7 +47,6 @@ import {
   useSearchPersistence,
 } from "@/hooks/useFormPersistence";
 import { montserrat } from "@/lib/fonts";
-import { useTimeFormat } from "@/contexts/TimeFormatContext";
 import { useToast } from "@/components/ui/toast";
 import Fuse from "fuse.js";
 import html2canvas from "html2canvas-pro";
@@ -134,7 +133,7 @@ export default function CustomGraphPage() {
   // vaila is public — no auth gate.
   const authLoading = false;
   const isAuthenticated = true;
-  
+
   const [scheduleData, setScheduleData] = useState<FrontendScheduleDay[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -144,7 +143,6 @@ export default function CustomGraphPage() {
   const hasUrlParams =
     typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).toString().length > 0;
-  const { use24h } = useTimeFormat();
   const { success, error: showError } = useToast();
 
   // Helper to check if an array is a continuous range
@@ -676,18 +674,18 @@ export default function CustomGraphPage() {
         `# Days: ${filters.values.selectedDays.map((d) => daysOfWeek[d]).join(", ")}`,
       );
       csvRows.push(
-        `# Time Range: ${formatTime(filteredTimeIntervals[0], use24h)} - ${formatTime(filteredTimeIntervals[filteredTimeIntervals.length - 1], use24h)}`,
+        `# Time Range: ${formatTime(filteredTimeIntervals[0])} - ${formatTime(filteredTimeIntervals[filteredTimeIntervals.length - 1])}`,
       );
       csvRows.push(
-        `# Rooms: ${filters.values.selectedRooms.length} room(s) selected`,
+        `# Professors: ${filters.values.selectedRooms.length} professor(s) selected`,
       );
       csvRows.push(
-        `# Grouped By: ${filters.values.groupBy === "rooms" ? "Rooms" : "Days"}`,
+        `# Grouped By: ${filters.values.groupBy === "rooms" ? "Professors" : "Days"}`,
       );
       csvRows.push("#");
 
       // Create CSV headers
-      const headers = ["Room", "Day", "Time Slot", "Availability"];
+      const headers = ["Professor", "Day", "Time Slot", "Availability"];
       csvRows.push(headers.join(","));
 
       // Add data rows
@@ -734,13 +732,13 @@ export default function CustomGraphPage() {
       const now = new Date();
       wb.Props = {
         Title: "vaila - Custom Graph",
-        Subject: "Custom Room Availability Graph",
+        Subject: "Custom Professor Availability Graph",
         Author: "Taha Parker via vaila",
         CreatedDate: now,
         Company: "vaila",
-        Comments: `Generated on ${now.toLocaleString()}. Days: ${filters.values.selectedDays.map((d) => daysOfWeek[d]).join(", ")}. Time Range: ${formatTime(filteredTimeIntervals[0], use24h)} - ${formatTime(filteredTimeIntervals[filteredTimeIntervals.length - 1], use24h)}. Grouped by: ${filters.values.groupBy === "rooms" ? "Rooms" : "Days"}.`,
+        Comments: `Generated on ${now.toLocaleString()}. Days: ${filters.values.selectedDays.map((d) => daysOfWeek[d]).join(", ")}. Time Range: ${formatTime(filteredTimeIntervals[0])} - ${formatTime(filteredTimeIntervals[filteredTimeIntervals.length - 1])}. Grouped by: ${filters.values.groupBy === "rooms" ? "Professors" : "Days"}.`,
         Keywords:
-          "vaila, custom graph, excel, xlsx, csv, export, download, rooms, days, times, availability, vacant, occupied, available, occupied, tp, taha parker, garfield, lasagna",
+          "vaila, custom graph, excel, xlsx, csv, export, download, professors, days, times, availability, vacant, occupied, available, occupied, tp, taha parker, garfield, lasagna",
       };
 
       // === MAIN SHEET (All Data) ===
@@ -748,8 +746,8 @@ export default function CustomGraphPage() {
 
       // Header row: Room/Day + time slots
       const headerRow = [
-        "Room/Day",
-        ...filteredTimeIntervals.map((time) => formatTime(time, use24h)),
+        "Professor/Day",
+        ...filteredTimeIntervals.map((time) => formatTime(time)),
       ];
       mainWsData.push(headerRow);
 
@@ -853,8 +851,8 @@ export default function CustomGraphPage() {
 
           // Header: Room + time slots
           dayWsData.push([
-            "Room",
-            ...filteredTimeIntervals.map((time) => formatTime(time, use24h)),
+            "Professor",
+            ...filteredTimeIntervals.map((time) => formatTime(time)),
           ]);
 
           // Data rows: one per room
@@ -943,7 +941,7 @@ export default function CustomGraphPage() {
           // Header: Day + time slots
           roomWsData.push([
             "Day",
-            ...filteredTimeIntervals.map((time) => formatTime(time, use24h)),
+            ...filteredTimeIntervals.map((time) => formatTime(time)),
           ]);
 
           // Data rows: one per day
@@ -1075,7 +1073,7 @@ export default function CustomGraphPage() {
       try {
         await navigator.share({
           title: "vaila Custom Graph",
-          text: "Check out this custom room availability graph",
+          text: "Check out this custom professor availability graph",
           url: shareableURL,
         });
       } catch (err) {
@@ -1327,7 +1325,7 @@ export default function CustomGraphPage() {
                                   value={idx.toString()}
                                   className="focus:bg-purple-500/30 focus:text-white"
                                 >
-                                  {formatTime(time, use24h)}
+                                  {formatTime(time)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -1361,7 +1359,7 @@ export default function CustomGraphPage() {
                                   value={idx.toString()}
                                   className="focus:bg-purple-500/30 focus:text-white"
                                 >
-                                  {formatTime(time, use24h)}
+                                  {formatTime(time)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -1386,7 +1384,7 @@ export default function CustomGraphPage() {
                               : "bg-black/20 border-white/20 text-white hover:bg-white/10",
                           )}
                         >
-                          {formatTime(time, use24h)}
+                          {formatTime(time)}
                         </Button>
                       ))}
                     </div>
@@ -1398,7 +1396,7 @@ export default function CustomGraphPage() {
             {/* Rooms Filter */}
             <AccordionItem value="rooms" className="border-white/10">
               <AccordionTrigger className="text-white hover:text-white/80 text-lg font-bold py-2">
-                Select Rooms
+                Select Professors
               </AccordionTrigger>
               <AccordionContent className="pt-3 pb-3">
                 <div className="space-y-4">
@@ -1408,7 +1406,7 @@ export default function CustomGraphPage() {
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <Input
                         type="text"
-                        placeholder="Search rooms..."
+                        placeholder="Search professors..."
                         value={roomSearch.query}
                         onChange={(e) => roomSearch.setQuery(e.target.value)}
                         className="pl-10 bg-black/20 border-white/20 text-white placeholder:text-gray-500 focus:border-purple-500 rounded-full"
@@ -1499,7 +1497,7 @@ export default function CustomGraphPage() {
                     }
                     className="data-[state=on]:bg-purple-500 data-[state=on]:text-white text-white border border-white/20 rounded-full px-4"
                   >
-                    Rooms
+                    Professors
                   </Toggle>
                   <Toggle
                     pressed={filters.values.groupBy === "date"}
@@ -1646,7 +1644,7 @@ export default function CustomGraphPage() {
                 <thead className="sticky top-0 z-30">
                   <tr>
                     <th className="sticky left-0 top-0 bg-black text-white z-40 px-2 md:px-3 py-3 border-r border-b border-white/15 text-center text-xs md:text-sm font-semibold whitespace-nowrap w-auto max-w-fit">
-                      Room
+                      Professor
                     </th>
                     {filteredTimeIntervals.map((time, index) => (
                       <th
@@ -1658,7 +1656,7 @@ export default function CustomGraphPage() {
                           maxWidth: "fit-content",
                         }}
                       >
-                        {formatTime(time, use24h)}
+                        {formatTime(time)}
                       </th>
                     ))}
                   </tr>
