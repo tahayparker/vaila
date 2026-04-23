@@ -1,8 +1,4 @@
 // src/components/SiteHeader.tsx
-//
-// vaila site header. No auth (public app). Mirrors vacansee's
-// navigation aesthetic — fixed glass bar, hover-revealed labels on
-// desktop, motion panel on mobile.
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -16,6 +12,7 @@ import {
   BadgeInfo,
   DoorOpen,
   Settings2,
+  CalendarCheck,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { qurovaFont } from "@/lib/fonts";
@@ -32,7 +29,7 @@ type NavItemType = (typeof navItems)[0];
 
 const vacanseeLink = {
   name: "vacansee",
-  href: "https://vacan.see/",
+  href: "https://vacansee.vercel.app/",
   icon: DoorOpen,
 };
 
@@ -64,7 +61,7 @@ const NavLink = React.forwardRef<
     ref,
   ) => {
     const isActuallyActive = item.href === currentPath;
-    const labelTransition = { duration: 0.2, ease: "easeInOut" };
+    const labelTransition = { duration: 0.2, ease: "easeInOut" } as const;
 
     if (isMobile) {
       return (
@@ -167,9 +164,9 @@ export default function SiteHeader({
   }, [currentPath]);
 
   const menuToggleTransition = { duration: 0.2 };
-  const mobilePanelTransition = { duration: 0.2, ease: "easeOut" };
-  const mobileBackdropTransition = { duration: 0.2, ease: "linear" };
-  const vacanseeLabelTransition = { duration: 0.2, ease: "easeInOut" };
+  const mobilePanelTransition = { duration: 0.2, ease: "easeOut" } as const;
+  const mobileBackdropTransition = { duration: 0.2, ease: "linear" } as const;
+  const vacanseeLabelTransition = { duration: 0.2, ease: "easeInOut" } as const;
 
   return (
     <>
@@ -191,7 +188,7 @@ export default function SiteHeader({
               }
             }}
           >
-            <UserRound className="h-6 w-6 text-purple-500" />
+            <CalendarCheck className="h-6 w-6 text-purple-500" />
             <span className={`sm:inline text-xl mt-1 ${qurovaFont.className}`}>
               vaila
             </span>
