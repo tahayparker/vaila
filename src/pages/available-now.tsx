@@ -116,7 +116,7 @@ export default function AvailableNowPage() {
     try {
       return DateTime.fromISO(checkedAt)
         .setZone(DUBAI_TIMEZONE)
-        .toFormat("h:mm a");
+        .toFormat("HH:mm");
     } catch {
       return "Invalid Time";
     }
@@ -137,7 +137,7 @@ export default function AvailableNowPage() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { delayChildren: 0.1, staggerChildren: 0.08 },
+      transition: { delayChildren: 0.01, staggerChildren: 0.01 },
     },
   };
   const itemVariants = {
@@ -145,7 +145,7 @@ export default function AvailableNowPage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 100, damping: 12 },
+      transition: { type: "spring" as const, stiffness: 100, damping: 12 },
     },
   };
 
