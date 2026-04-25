@@ -5,7 +5,7 @@
  * with different size variants and optional messages
  */
 
-import React from "react";
+import React, { type JSX } from "react";
 import { cn } from "@/lib/utils";
 
 /**
