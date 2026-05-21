@@ -38,7 +38,7 @@
     "framer-motion": "^12.6.3",
     "fuse.js": "^7.1.0",
     "html2canvas-pro": "^1.5.12",
-    "js-cookie": "^3.0.5",
+    "js-cookie": "^3.0.7",
     "lucide-react": "^0.487.0",
     "luxon": "^3.7.2",
     "minimatch": "^10.2.5",
