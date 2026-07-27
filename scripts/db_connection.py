@@ -22,10 +22,7 @@ def get_supabase_client() -> Client:
         raise ValueError("Supabase Service Role Key not set in environment variables (SUPABASE_SERVICE_ROLE_KEY).")
 
     try:
-        supabase: Client = create_client(
-            supabase_url=url,
-            supabase_key=key
-        )
+        supabase: Client = create_client(url, key)
 
         print("Supabase client initialized successfully (using Service Role Key - RLS bypassed).")
         return supabase
