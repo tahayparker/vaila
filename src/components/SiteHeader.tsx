@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   UserRound,
@@ -15,6 +15,7 @@ import {
   CalendarCheck,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { KeyboardKeys, AriaAnnouncer } from "@/lib/accessibility";
 import { qurovaFont } from "@/lib/fonts";
 
 const navItems = [
@@ -153,7 +154,7 @@ export default function SiteHeader({
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const [isVacanseeLinkHovered, setIsVacanseeLinkHovered] = useState(false);
   const router = useRouter();
-  const currentPath = router.pathname;
+  const currentPath = usePathname();
 
   useEffect(() => {
     setIsMounted(true);
@@ -182,7 +183,7 @@ export default function SiteHeader({
             href="/"
             className="flex items-center gap-2 text-white font-semibold transition-opacity hover:opacity-80"
             onClick={(e) => {
-              if (maintenanceMode && router.pathname !== "/maintenance") {
+              if (maintenanceMode && currentPath !== "/maintenance") {
                 e.preventDefault();
                 router.push("/maintenance");
               }
@@ -256,83 +257,126 @@ export default function SiteHeader({
               </motion.a>
             </div>
 
-            {/* Mobile burger */}
-            <button
-              type="button"
-              className="md:hidden inline-flex items-center justify-center rounded-full w-10 h-10 text-white/80 hover:text-white hover:bg-white/10"
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-              onClick={() => setIsMenuOpen((v) => !v)}
-            >
-              <motion.div
-                animate={{ rotate: isMenuOpen ? 90 : 0 }}
-                transition={menuToggleTransition}
-                className="flex flex-col gap-1"
+            {/* Mobile Menu Trigger */}
+            <div className="flex md:hidden ml-1">
+              <motion.button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === KeyboardKeys.ENTER ||
+                    e.key === KeyboardKeys.SPACE
+                  ) {
+                    e.preventDefault();
+                    setIsMenuOpen(!isMenuOpen);
+                    AriaAnnouncer.getInstance().announce(
+                      isMenuOpen ? "Menu closed" : "Menu opened",
+                    );
+                  }
+                }}
+                className="relative z-[65] flex flex-col justify-center items-center gap-[7px] p-2 rounded-full transition-colors"
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-menu"
+                whileTap={{ scale: 0.95 }}
               >
-                <span className="block w-5 h-0.5 bg-current" />
-                <span className="block w-5 h-0.5 bg-current" />
-                <span className="block w-5 h-0.5 bg-current" />
-              </motion.div>
-            </button>
+                <motion.span
+                  className="w-5 h-px bg-white block rounded-full"
+                  animate={
+                    isMenuOpen ? { rotate: 45, y: 4 } : { rotate: 0, y: 0 }
+                  }
+                  transition={menuToggleTransition}
+                />
+                <motion.span
+                  className="w-5 h-px bg-white block rounded-full"
+                  animate={
+                    isMenuOpen ? { rotate: -45, y: -4 } : { rotate: 0, y: 0 }
+                  }
+                  transition={menuToggleTransition}
+                />
+              </motion.button>
+            </div>
+          </div>
+        )}
+        {/* Placeholder if not mounted AND not in maintenance mode */}
+        {!maintenanceMode && !isMounted && (
+          <div className="flex items-center gap-1 sm:gap-2">
+            <div className="hidden md:block w-48 h-8 bg-white/5 rounded-full animate-pulse"></div>
+            <div className="w-8 h-8 bg-white/5 rounded-full animate-pulse"></div>
+            <div className="w-8 h-8 bg-white/5 rounded-full animate-pulse md:hidden"></div>
           </div>
         )}
       </header>
 
-      {/* Mobile panel */}
-      <AnimatePresence>
-        {!maintenanceMode && isMenuOpen && (
-          <>
-            <motion.div
-              key="mobile-backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={mobileBackdropTransition}
-              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
-              onClick={() => setIsMenuOpen(false)}
-              aria-hidden="true"
-            />
-            <motion.aside
-              key="mobile-panel"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={mobilePanelTransition}
-              className="fixed top-16 right-0 bottom-0 z-40 w-72 max-w-[85vw] bg-black/80 backdrop-blur-xl border-l border-white/10 md:hidden"
-              role="dialog"
-              aria-modal="true"
-            >
-              <nav className="flex flex-col p-4" aria-label="Mobile navigation">
-                <ul className="flex flex-col gap-1">
-                  {navItems.map((item) => (
-                    <NavLink
-                      key={item.href}
-                      item={item}
-                      isMobile
-                      currentPath={currentPath}
-                      isHovered={false}
-                      onHoverStart={() => {}}
-                      onHoverEnd={() => {}}
+      {/* Conditionally render mobile menu panel and backdrop */}
+      {!maintenanceMode && (
+        <>
+          <AnimatePresence>
+            {isMounted && isMenuOpen && (
+              <motion.div
+                key="mobile-backdrop"
+                className="fixed inset-0 top-16 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={mobileBackdropTransition}
+                onClick={() => setIsMenuOpen(false)}
+              />
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {isMounted && isMenuOpen && (
+              <motion.div
+                key="mobile-menu-panel"
+                id="mobile-menu"
+                role="menu"
+                aria-label="Mobile navigation menu"
+                className={
+                  "fixed inset-x-4 top-20 z-50 md:hidden bg-gradient-to-br from-black/80 to-black/90 backdrop-blur-xl border border-white/15 shadow-xl rounded-lg overflow-hidden"
+                }
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={mobilePanelTransition}
+              >
+                <div className="max-h-[calc(100vh-6rem)] overflow-y-auto p-4 flex flex-col">
+                  <nav>
+                    <ul className="flex flex-col gap-2">
+                      {navItems.map((navItem) => (
+                        <NavLink
+                          key={navItem.href}
+                          item={navItem}
+                          isMobile={true}
+                          currentPath={currentPath}
+                          isHovered={false}
+                          onHoverStart={() => {}}
+                          onHoverEnd={() => {}}
+                          onClick={() => setIsMenuOpen(false)}
+                        />
+                      ))}
+                    </ul>
+                  </nav>
+                  <Separator className="bg-white/20 my-3" />
+                  <div className="mt-auto">
+                    {/* vacansee cross-link */}
+                    <a
+                      href={vacanseeLink.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       onClick={() => setIsMenuOpen(false)}
-                    />
-                  ))}
-                </ul>
-                <Separator className="my-3 bg-white/10" />
-                <a
-                  href={vacanseeLink.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 w-full p-3 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-colors"
-                >
-                  <vacanseeLink.icon className="h-5 w-5 flex-shrink-0 text-purple-500" />
-                  <span className="flex-grow text-base">
-                    {vacanseeLink.name}
-                  </span>
-                </a>
-              </nav>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+                      className="flex items-center gap-3 w-full p-3 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-colors duration-200 ease-in-out"
+                    >
+                      <vacanseeLink.icon className="h-5 w-5 flex-shrink-0 text-purple-500" />
+                      <span className="flex-grow text-base">
+                        {vacanseeLink.name}
+                      </span>
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
+      )}
     </>
   );
 }
