@@ -273,9 +273,12 @@ if __name__ == "__main__":
         print(f"Script failed: {main_err}", file=sys.stderr)
         final_success = False
     finally:
-        # Attempt to disconnect
-        supabase.rpc("disconnect_db", {}) # Or appropriate disconnect method
-        print("Supabase client disconnected (attempted).")
+        # PostgREST over HTTP is stateless; attempt disconnect safely if defined
+        try:
+            if hasattr(supabase, "rpc"):
+                supabase.rpc("disconnect_db", {}).execute()
+        except Exception:
+            pass
 
 
     if final_success:

@@ -25,6 +25,10 @@ jobs:
       group: vaila-refresh
       cancel-in-progress: false
 
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,24 +39,25 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: "scripts/requirements.txt"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r scripts/requirements.txt
 
-      - name: Set up environment
-        env:
-          SUPABASE_URL_SECRET: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_KEY_SECRET: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      - name: Verify environment
         run: |
-          for v in SUPABASE_URL_SECRET SUPABASE_SERVICE_KEY_SECRET; do
-            if [ -z "${!v}" ]; then echo "::error::Secret $v not set."; exit 1; fi
-          done
-          {
-            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}"
-            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
-          } >> "$GITHUB_ENV"
+          if [ -z "${SUPABASE_URL:-}" ]; then
+            echo "::error::SUPABASE_URL secret is not set!"
+            exit 1
+          fi
+          if [ -z "${SUPABASE_SERVICE_ROLE_KEY:-}" ]; then
+            echo "::error::SUPABASE_SERVICE_ROLE_KEY secret is not set!"
+            exit 1
+          fi
+          echo "Supabase environment variables verified."
 
       - name: Sync teachers table
         run: python scripts/update_teachers.py
@@ -62,17 +67,28 @@ jobs:
 
       - name: Format scheduleData.json
         run: |
-          npm install --no-save prettier
           npx prettier public/scheduleData.json --write || true
 
       - name: Commit and push
         run: |
+          set -euo pipefail
           git config user.name "Taha Parker"
           git config user.email "98612931+tahayparker@users.noreply.github.com"
           git add public/scheduleData.json
-          if ! git diff --staged --quiet; then
-            git commit -m "data: refresh scheduleData.json [skip deploy]"
-            git push
-          else
+          if git diff --staged --quiet; then
             echo "No changes to commit."
+            exit 0
           fi
+          git commit -m "data: refresh scheduleData.json [skip deploy]"
+
+          for attempt in 1 2 3; do
+            if git push origin main; then
+              echo "Successfully pushed updated schedule data."
+              exit 0
+            fi
+            echo "Push attempt $attempt failed. Rebasing against origin/main..."
+            git pull --rebase origin main || true
+            sleep 3
+          done
+          echo "::error::Failed to push changes after 3 attempts."
+          exit 1

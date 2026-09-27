@@ -21,6 +21,9 @@ def get_supabase_client() -> Client:
     if not key:
         raise ValueError("Supabase Service Role Key not set in environment variables (SUPABASE_SERVICE_ROLE_KEY).")
 
+    url = url.strip().strip('"').strip("'")
+    key = key.strip().strip('"').strip("'")
+
     try:
         supabase: Client = create_client(url, key)
 
